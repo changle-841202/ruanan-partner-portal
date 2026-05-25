@@ -73,7 +73,8 @@ body{background:linear-gradient(135deg,#f0f4f8 0%,#e8edf2 100%);min-height:100vh
 .scene-tag.selected{border-color:var(--green);background:var(--green-light);color:var(--green-dark);font-weight:600}
 .scene-tag .dot{width:8px;height:8px;border-radius:50%;background:var(--border);transition:all 0.2s}
 .scene-tag.selected .dot{background:var(--green)}
-.scene-tag.desc{font-size:11px;color:var(--text);font-weight:400;margin-top:2px}
+.scene-tag .desc{font-size:11px;color:var(--text);font-weight:400;margin-top:2px}
+.scene-tag .price-tag{font-size:11px;color:var(--blue);font-weight:700;margin-top:2px}
 
 /* Budget range */
 .budget-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
@@ -216,12 +217,13 @@ const SCENARIOS = {
     {id:'t6',title:'DevSecOps集成',desc:'需要在CI/CD流水线中集成安全检测能力',tags:['CI/CD','自动化','增量扫描']},
   ],
   service:[
-    {id:'s1',title:'代码安全审计服务',desc:'委托我们的安全专家对代码进行深度审计',tags:['专家审计','深度分析','审计报告']},
-    {id:'s2',title:'固件安全测试服务',desc:'委托对芯片/设备固件进行专业安全测试',tags:['芯片测试','漏洞挖掘','安全评估']},
-    {id:'s3',title:'渗透测试服务',desc:'对应用系统进行黑盒/白盒渗透测试',tags:['渗透测试','红队','攻击模拟']},
-    {id:'s4',title:'合规咨询服务',desc:'提供法规合规差距分析和整改方案咨询',tags:['R155','等保','GJB','合规咨询']},
-    {id:'s5',title:'安全培训服务',desc:'为开发团队提供安全编码和工具使用培训',tags:['安全培训','SDL','赋能']},
-    {id:'s6',title:'驻场安全支持',desc:'安全专家驻场协助安全检测和漏洞修复',tags:['驻场','应急响应','持续支持']},
+    {id:'s1',title:'代码安全审计服务',desc:'专家深度审计 · ≤10GB源码 · 含复测',price:'2万/次',tags:['专家审计','深度分析','审计报告','含复测']},
+    {id:'s2',title:'固件安全测试服务',desc:'芯片/设备固件专业安全测试 · ≤20GB',price:'1万/次',tags:['芯片测试','漏洞挖掘','安全评估']},
+    {id:'s3',title:'开源合规审计服务',desc:'开源组件许可证+漏洞合规审计 · ≤20GB源码',price:'5万/次',tags:['SBOM','许可证','合规审计','组件清查']},
+    {id:'s4',title:'渗透测试服务',desc:'对应用系统进行黑盒/白盒渗透测试',price:'按项目报价',tags:['渗透测试','红队','攻击模拟']},
+    {id:'s5',title:'合规咨询服务',desc:'法规合规差距分析和整改方案咨询',price:'按项目报价',tags:['R155','等保','GJB','合规咨询']},
+    {id:'s6',title:'安全培训服务',desc:'为开发团队提供安全编码和工具使用培训',price:'按需报价',tags:['安全培训','SDL','赋能']},
+    {id:'s7',title:'驻场安全支持',desc:'安全专家驻场协助安全检测和漏洞修复',price:'按人天报价',tags:['驻场','应急响应','持续支持']},
   ],
 };
 
@@ -300,7 +302,7 @@ function rStep2(){
   // 测试服务
   h+=`<div class="scene-group"><div class="scene-group-title"><span class="icon">🛠️</span>测试与服务</div><div class="scene-tags">`;
   for(const s of SCENARIOS.service){
-    h+=`<div class="scene-tag${state.scenes.includes(s.id)?' selected':''}" onclick="toggleScene('${s.id}')"><div class="dot"></div><div><div>${s.title}</div><div class="desc">${s.desc}</div></div></div>`;
+    h+=`<div class="scene-tag${state.scenes.includes(s.id)?' selected':''}" onclick="toggleScene('${s.id}')"><div class="dot"></div><div><div>${s.title}${s.price?`<span style="font-size:12px;color:var(--green-dark);font-weight:700"> · ${s.price}</span>`:''}</div><div class="desc">${s.desc}</div></div></div>`;
   }
   h+=`</div></div>`;
 
@@ -423,13 +425,36 @@ function rStep5(){
     </div></div>`;
   }
 
+  // 服务报价
+  let serviceTotal = 0;
+  const serviceItems = [];
+  const servicePriceMap = {s1:{name:'代码安全审计服务',price:2,cond:'≤10GB源码'},s2:{name:'固件安全测试服务',price:1,cond:'≤20GB固件'},s3:{name:'开源合规审计服务',price:5,cond:'≤20GB源码'}};
+  for(const sid of state.scenes){
+    const sp = servicePriceMap[sid];
+    if(sp){ serviceItems.push(sp); serviceTotal += sp.price; }
+  }
+
   // 报价汇总
   const priceLabel = productCount>=3?'3产品组合85折':productCount>=2?'2产品组合9折':'标准价';
+  const grandTotal = discountedTotal + serviceTotal;
   h+=`<div class="quote-card">
     <div class="total-label">💰 参考报价（${priceLabel}）</div>
-    <div class="total">${discountedTotal}万</div>
-    <div class="total-label">/年 · ${productCount}个产品 · 每产品5用户1并发 · 全功能模块</div>
+    <div style="display:flex;align-items:baseline;gap:12px;flex-wrap:wrap"><div class="total">${grandTotal}万</div><div style="font-size:14px;opacity:0.8">/年</div></div>
+    <div class="total-label">${productCount}个产品（每产品5用户1并发·全功能）${serviceTotal>0?' + '+serviceItems.length+'项测试服务':''}</div>
   </div>`;
+
+  // 明细
+  h+=`<div class="quote-note"><b>📌 报价明细：</b><br>`;
+  h+=`<b>【产品许可】</b><br>`;
+  h+=`· 每产品标准价 50万/年（含5用户1并发，全功能模块）<br>`;
+  h+=`· 组合优惠：${priceLabel}，产品合计 ${discountedTotal}万/年<br>`;
+  if(serviceItems.length>0){
+    h+=`<br><b>【测试服务】（按次收费）</b><br>`;
+    for(const si of serviceItems) h+=`· ${si.name}：${si.price}万/次（${si.cond}，含复测）<br>`;
+    h+=`· 服务合计：${serviceTotal}万/次<br>`;
+    h+=`<br>· ⚠️ 超出限制范围需人工介入评估<br>`;
+  }
+  h+=`· 以上为参考报价，正式报价需根据具体需求定制</div>`;
 
   // 说明
   h+=`<div class="quote-note">
@@ -456,8 +481,12 @@ function rStep5(){
   h+=`<div class="card"><h2 class="sec-title">📅 获取正式报价</h2><p class="sec-sub">提交后商务经理将在1个工作日内联系，提供详细报价和产品演示</p>
   <div class="form-row"><div class="form-group"><label>公司名称 *</label><input id="fCompany" placeholder="请输入公司全称"></div><div class="form-group"><label>联系人 *</label><input id="fName" placeholder="请输入联系人姓名"></div></div>
   <div class="form-row"><div class="form-group"><label>手机号 *</label><input id="fPhone" type="tel" placeholder="请输入手机号"></div><div class="form-group"><label>邮箱</label><input id="fEmail" type="email" placeholder="请输入邮箱"></div></div>
-  <div class="form-group"><label>补充说明</label><textarea id="fNote" placeholder="项目背景、特殊需求、时间要求...">${state.customPain||''}</textarea></div>
+  <div class="form-group"><label>补充说明</label><textarea id="fNote" placeholder="项目背景、源码包大小、特殊需求...">${state.customPain||''}</textarea></div>
   <button class="btn btn-green btn-lg" onclick="submitQuote()" style="width:100%;justify-content:center">📩 提交获取正式报价方案</button>
+  <div style="margin-top:16px;padding:16px;background:var(--bg-card);border-radius:12px;text-align:center;font-size:13px;color:var(--text-dark);line-height:1.8">
+    📞 如需加急或超出标准范围，可直接联系<br>
+    <b>电话：13692220639</b> &nbsp;|&nbsp; <b>邮箱：changle@softsec-tech.cn</b>
+  </div>
   </div>`;
 
   h+=`<div style="display:flex;gap:12px;justify-content:center;margin-top:16px">
@@ -493,7 +522,9 @@ function submitQuote(){
   const n=document.getElementById('fName')?.value.trim();
   const p=document.getElementById('fPhone')?.value.trim();
   if(!c||!n||!p){toast('请填写公司名称、联系人和手机号','error');return}
-  const data={company:c,name:n,phone:p,email:document.getElementById('fEmail')?.value.trim()||'',note:document.getElementById('fNote')?.value.trim()||'',industry:state.industry,scenes:state.scenes,budget:state.budget,pains:state.pains,customPain:state.customPain,deploy:state.deploy,time:new Date().toLocaleString('zh-CN')};
+  const servicePriceMap={s1:'代码审计2万/次',s2:'固件测试1万/次',s3:'开源合规5万/次'};
+  const svcs=state.scenes.filter(s=>servicePriceMap[s]).map(s=>servicePriceMap[s]);
+  const data={company:c,name:n,phone:p,email:document.getElementById('fEmail')?.value.trim()||'',note:document.getElementById('fNote')?.value.trim()||'',industry:state.industry,scenes:state.scenes,services:svcs,budget:state.budget,pains:state.pains,customPain:state.customPain,deploy:state.deploy,time:new Date().toLocaleString('zh-CN')};
   const leads=JSON.parse(localStorage.getItem('ruanan_leads')||'[]');leads.push(data);localStorage.setItem('ruanan_leads',JSON.stringify(leads));
   console.log('选型提交:',data);
   toast('✅ 方案已提交！商务经理将在1个工作日内联系您');
