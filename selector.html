@@ -169,7 +169,7 @@ body{background:linear-gradient(135deg,#f0f4f8 0%,#e8edf2 100%);min-height:100vh
 <script>
 // ===== 产品库 =====
 const PRODUCTS = {
-  SAST:{id:'SAST',name:'SAST 静态代码分析',brand:'静兮',icon:'🔍',category:'代码安全',desc:'基于AI引擎的新一代静态应用安全测试工具',price:50,
+  SAST:{id:'SAST',name:'SAST 静态代码分析',brand:'静兮',icon:'🔍',category:'代码安全',desc:'基于AI引擎的新一代静态应用安全测试工具，AI SAST产品的核心底座',price:50,
     features:['30+语言支持','AI去误报引擎','MISRA/CERT/GJB合规','CI/CD集成','增量秒级扫描','IDE实时检测','中文合规报告','涉密离线部署'],
     scenes:['SAST'],tags:['代码审计','静态分析','安全左移','DevSecOps']},
   SCA:{id:'SCA',name:'SCA 软件成分分析',brand:'源兮',icon:'📦',category:'供应链安全',desc:'软件物料清单自动生成与开源风险管理平台',price:50,
@@ -181,8 +181,8 @@ const PRODUCTS = {
   LLM:{id:'LLM',name:'大模型安全测试',brand:'元安',icon:'🤖',category:'AI安全',desc:'AI大模型全生命周期安全测试与合规评估',price:50,
     features:['提示注入检测','越狱红队测试','数据泄露评估','模型鲁棒性测试','RAG安全检测','偏见与公平性','合规自评估报告','持续安全监控'],
     scenes:['LLM'],tags:['AI安全','大模型','提示注入','对齐评估']},
-  AI_SAST:{id:'AI_SAST',name:'AI SAST 智能分析',brand:'灵析',icon:'✨',category:'代码安全',desc:'LLM驱动的智能代码审计与自动修复',price:50,
-    features:['LLM语义理解','自然语言查询','遗留代码批量审计','自动修复建议','跨文件漏洞检测','技术债务评估','安全编码助手','私有化部署'],
+  AI_SAST:{id:'AI_SAST',name:'AI SAST 智能代码分析',brand:'灵析',icon:'✨',category:'代码安全',desc:'以静兮(SAST)为底座，通过大模型直接对代码进行智能化静态测试和自动修复',price:0.8,priceUnit:'用户',priceModel:'按用户付费',
+    features:['SAST底座+大模型引擎','智能化静态测试','自然语言查询','AI自动修复建议','跨文件漏洞检测','数十亿参数代码模型','安全编码助手','私有化部署','按用户数弹性扩展'],
     scenes:['AI_SAST'],tags:['AI审计','遗留代码','自动修复','代码理解']},
 };
 
@@ -208,28 +208,29 @@ const INDUSTRIES = {
 // ===== 场景库 =====
 const SCENARIOS = {
   compliance:[
-    {id:'c1',title:'法规合规审计',desc:'需要出具满足某法规要求的安全审计报告',tags:['R155','等保','GJB','ISO 21434']},
+    {id:'c1',title:'法规合规审计',desc:'出具满足特定法规要求的安全审计报告',tags:['R155','等保','GJB','ISO 21434']},
     {id:'c2',title:'供应链安全合规',desc:'管理供应商软件的SBOM和开源合规',tags:['SBOM','许可证','供应链']},
     {id:'c3',title:'信创国产化替代',desc:'在信创环境中部署国产安全工具',tags:['信创','国产化','自主可控']},
     {id:'c4',title:'涉密环境安全检测',desc:'在完全离线涉密环境中进行代码安全审计',tags:['离线','涉密','军工']},
     {id:'c5',title:'行业认证准备',desc:'为ISO/ASPICE/功能安全等认证提供安全证据',tags:['ISO 26262','ASPICE','IEC 62304']},
+    {id:'c6',title:'行业客户合规审计',desc:'应客户要求出具第三方安全检测报告',tags:['第三方审计','客户准入','安全评估']},
+    {id:'c7',title:'开源许可合规审计',desc:'扫描开源许可证冲突、传染性风险，确保合规使用',tags:['GPL合规','许可证冲突','开源治理']},
+    {id:'c8',title:'软件出海合规审计',desc:'满足欧盟CRA、GDPR等出海法规要求',tags:['CRA','GDPR','SBOM','出海合规']},
   ],
   tool:[
     {id:'t1',title:'代码安全扫描',desc:'需要自动化的代码漏洞和合规检测工具',tags:['SAST','漏洞检测','编码规范']},
     {id:'t2',title:'开源组件管理',desc:'需要管理第三方和开源组件的安全风险',tags:['SCA','组件安全','漏洞追踪']},
     {id:'t3',title:'固件安全分析',desc:'需要对嵌入式/IoT/ECU固件进行安全审计',tags:['固件解包','启动验证','Fuzz']},
-    {id:'t4',title:'AI大模型安全',desc:'需要对部署的大模型进行安全测试和合规评估',tags:['提示注入','越狱检测','隐私评估']},
-    {id:'t5',title:'遗留代码审计',desc:'需要对大量老代码进行批量安全审计和技术债务评估',tags:['遗留代码','技术债','批量审计']},
-    {id:'t6',title:'DevSecOps集成',desc:'需要在CI/CD流水线中集成安全检测能力',tags:['CI/CD','自动化','增量扫描']},
+    {id:'t4',title:'AI大模型安全',desc:'需要对部署的大模型进行安全测试和合规评估',tags:['提示注入','越狱检测','隐私评估']},{id:'t5',title:'大模型安全测试',desc:'需要对大模型应用进行提示注入、越狱、数据泄露等安全检测',tags:['AI安全','提示注入','越狱检测']},{id:'t7',title:'DevSecOps工具链采购',desc:'搭建DevSecOps安全工具链，将安全检测嵌入CI/CD流水线',tags:['DevSecOps','CI/CD','安全左移']},{id:'t6',title:'AI SAST 智能代码扫描',desc:'以SAST为底座+大模型驱动的智能化静态代码安全测试，按用户付费',tags:['AI代码审计','LLM','自动修复']},
   ],
   service:[
-    {id:'s1',title:'代码安全审计服务',desc:'专家深度审计 · ≤10GB源码 · 含复测',price:'2万/次',tags:['专家审计','深度分析','审计报告','含复测']},
-    {id:'s2',title:'固件安全测试服务',desc:'芯片/设备固件专业安全测试 · ≤20GB',price:'1万/次',tags:['芯片测试','漏洞挖掘','安全评估']},
-    {id:'s3',title:'开源合规审计服务',desc:'开源组件许可证+漏洞合规审计 · ≤20GB源码',price:'5万/次',tags:['SBOM','许可证','合规审计','组件清查']},
-    {id:'s4',title:'渗透测试服务',desc:'对应用系统进行黑盒/白盒渗透测试',price:'按项目报价',tags:['渗透测试','红队','攻击模拟']},
-    {id:'s5',title:'合规咨询服务',desc:'法规合规差距分析和整改方案咨询',price:'按项目报价',tags:['R155','等保','GJB','合规咨询']},
-    {id:'s6',title:'安全培训服务',desc:'为开发团队提供安全编码和工具使用培训',price:'按需报价',tags:['安全培训','SDL','赋能']},
-    {id:'s7',title:'驻场安全支持',desc:'安全专家驻场协助安全检测和漏洞修复',price:'按人天报价',tags:['驻场','应急响应','持续支持']},
+    {id:'s1',title:'代码安全审计服务',desc:'专家深度审计 · ≤10GB源码 · 含复测',tags:['专家审计','深度分析','审计报告','含复测']},
+    {id:'s2',title:'固件安全测试服务',desc:'芯片/设备固件专业安全测试 · ≤20GB',tags:['芯片测试','漏洞挖掘','安全评估']},
+    {id:'s3',title:'开源合规审计服务',desc:'开源组件许可证+漏洞合规审计 · ≤20GB源码',tags:['SBOM','许可证','合规审计','组件清查']},
+    {id:'s4',title:'渗透测试服务',desc:'对应用系统进行黑盒/白盒渗透测试',tags:['渗透测试','红队','攻击模拟']},
+    {id:'s5',title:'合规咨询服务',desc:'法规合规差距分析和整改方案咨询',tags:['R155','等保','GJB','合规咨询']},
+    {id:'s6',title:'安全培训服务',desc:'为开发团队提供安全编码和工具使用培训',tags:['安全培训','SDL','赋能']},
+    {id:'s7',title:'驻场安全支持',desc:'安全专家驻场协助安全检测和漏洞修复',tags:['驻场','应急响应','持续支持']},
   ],
 };
 
@@ -308,7 +309,7 @@ function rStep2(){
   // 测试服务
   h+=`<div class="scene-group"><div class="scene-group-title"><span class="icon">🛠️</span>测试与服务</div><div class="scene-tags">`;
   for(const s of SCENARIOS.service){
-    h+=`<div class="scene-tag${state.scenes.includes(s.id)?' selected':''}" data-action="toggleScene" data-param="${s.id}"><div class="dot"></div><div><div>${s.title}${s.price?`<span style="font-size:12px;color:var(--green-dark);font-weight:700"> · ${s.price}</span>`:''}</div><div class="desc">${s.desc}</div></div></div>`;
+    h+=`<div class="scene-tag${state.scenes.includes(s.id)?' selected':''}" data-action="toggleScene" data-param="${s.id}"><div class="dot"></div><div><div>${s.title}</div><div class="desc">${s.desc}</div></div></div>`;
   }
   h+=`</div></div>`;
 
@@ -392,9 +393,9 @@ function rStep5(){
     if(sid==='t1'){ scores['SAST']=(scores['SAST']||0)+3; }
     if(sid==='t2'){ scores['SCA']=(scores['SCA']||0)+3; }
     if(sid==='t3'){ scores['FIRMWARE']=(scores['FIRMWARE']||0)+3; }
-    if(sid==='t4'){ scores['LLM']=(scores['LLM']||0)+3; }
-    if(sid==='t5'){ scores['AI_SAST']=(scores['AI_SAST']||0)+3; scores['SAST']=(scores['SAST']||0)+1; }
-    if(sid==='t6'){ scores['SAST']=(scores['SAST']||0)+2; scores['SCA']=(scores['SCA']||0)+1; }
+    if(sid==='t4'){ scores['LLM']=(scores['LLM']||0)+3; } if(sid==='t5'){ scores['LLM']=(scores['LLM']||0)+3; } if(sid==='t7'){ scores['SAST']=(scores['SAST']||0)+2; scores['SCA']=(scores['SCA']||0)+1; } if(sid==='t6'){ scores['AI_SAST']=(scores['AI_SAST']||0)+3; }
+    
+    
     if(sid==='s1'||sid==='s6'){ scores['SAST']=(scores['SAST']||0)+1; }
     if(sid==='s2'){ scores['FIRMWARE']=(scores['FIRMWARE']||0)+2; }
     if(sid==='s3'){ scores['SAST']=(scores['SAST']||0)+1; }
@@ -412,10 +413,10 @@ function rStep5(){
 
   // 计算报价
   const productCount = recommended.length;
-  const unitPrice = 50; // 万/年/产品
+  const unitPrice = 50; const aiSastPrice = 0.8; // 万/年/产品
   const bundleDiscount = productCount>=3?0.85:productCount>=2?0.9:1.0;
   const rawTotal = productCount * unitPrice;
-  const discountedTotal = Math.round(rawTotal * bundleDiscount);
+  const discountedTotal = Math.round(rawTotal * bundleDiscount); const aiSastUsers = 20;
   const budgetFactor = budget?budget.factor:1.0;
 
   // 推荐产品卡片
@@ -427,7 +428,7 @@ function rStep5(){
       <div style="flex:1"><div class="rec-name">${p.icon} ${p.name}</div><div class="rec-brand">${p.brand} · ${p.category}</div>
       <div style="font-size:13px;color:var(--text);line-height:1.6;margin-bottom:8px">${p.desc}</div>
       <div class="rec-features">${p.features.map(f=>`<span class="rec-feature">${f}</span>`).join('')}</div></div>
-      <div class="rec-price-box"><div class="rec-price">${unitPrice}万</div><div class="rec-price-label">/年/套</div></div>
+      <div class="rec-price-box"><div class="rec-price">${pid==='AI_SAST'?aiSastPrice+'万':unitPrice+'万'}</div><div class="rec-price-label">/${pid==='AI_SAST'?'用户/月':'年/套'}</div></div>
     </div></div>`;
   }
 
