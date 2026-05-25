@@ -271,7 +271,7 @@ function updateUI(){
 function rStep1(){
   let h=`<div class="card"><div class="sec-label">STEP 1 · 选择行业</div><h2 class="sec-title">选择客户所属行业</h2><p class="sec-sub">系统将根据行业自动匹配对应的法规要求和产品推荐策略</p><div class="grid3">`;
   for(const [key,ind] of Object.entries(INDUSTRIES)){
-    h+=`<div class="ind-card${state.industry===key?' selected':''}" onclick="selectIndustry('${key.replace(/'/g, "\\'")}')">
+    h+=`<div class="ind-card${state.industry===key?' selected':''}" onclick="selectIndustry('${key}')">
       <div class="ind-icon">${ind.icon}</div>
       <div class="ind-name">${key}</div>
       <div class="ind-reg">${ind.reg}</div>
