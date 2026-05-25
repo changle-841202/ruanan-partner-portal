@@ -147,7 +147,10 @@ body{background:linear-gradient(135deg,#f0f4f8 0%,#e8edf2 100%);min-height:100vh
 
 <header class="topbar">
   <a class="logo" href="#"><div class="logo-icon">软</div>软安科技 · 智能选型</a>
-  <button class="btn btn-outline btn-sm" data-action="resetAll">🔄 重新开始</button>
+  <div style="display:flex;gap:8px">
+    <a class="btn btn-outline btn-sm" href="admin.html" style="text-decoration:none">📊 管理看板</a>
+    <button class="btn btn-outline btn-sm" data-action="resetAll">🔄 重新开始</button>
+  </div>
 </header>
 
 <div class="container">
@@ -513,7 +516,7 @@ function rStep5(){
 }
 
 // ===== Actions =====
-function saveUserInfo(){ var u=state.userInfo; u.company=document.getElementById('uCompany')?.value.trim()||''; u.address=document.getElementById('uAddress')?.value.trim()||''; u.contact=document.getElementById('uContact')?.value.trim()||''; u.title=document.getElementById('uTitle')?.value.trim()||''; u.email=document.getElementById('uEmail')?.value.trim()||''; u.phone=document.getElementById('uPhone')?.value.trim()||''; if(!u.company||!u.contact||!u.title||!u.email||!u.phone){ toast('请填写所有必填项','error'); return; } state.step=1; render(); window.scrollTo(0,0); }
+function saveUserInfo(){ var u=state.userInfo; u.company=document.getElementById('uCompany')?.value.trim()||''; u.address=document.getElementById('uAddress')?.value.trim()||''; u.contact=document.getElementById('uContact')?.value.trim()||''; u.title=document.getElementById('uTitle')?.value.trim()||''; u.email=document.getElementById('uEmail')?.value.trim()||''; u.phone=document.getElementById('uPhone')?.value.trim()||''; if(!u.company||!u.contact||!u.title||!u.email||!u.phone){ toast('请填写所有必填项','error'); return; } var regs=JSON.parse(localStorage.getItem('ruanan_regs')||'[]'); var dup=regs.findIndex(function(r){return r.company===u.company}); var entry={company:u.company,address:u.address,contact:u.contact,title:u.title,email:u.email,phone:u.phone,time:new Date().toLocaleString('zh-CN'),id:Date.now().toString(36)}; if(dup>=0){regs[dup]=entry}else{regs.push(entry)} localStorage.setItem('ruanan_regs',JSON.stringify(regs)); state.regId=entry.id; state.step=1; render(); window.scrollTo(0,0); }
 function selectIndustry(key){ state.industry=key; state.scenes=[]; state.products=[]; state.budget=null; state.pains=[]; state.customPain=""; render(); }
 function saveProjectInfo(){ var info=state.projectInfo||{}; info.budget=document.getElementById('pBudget')?.value.trim()||''; info.teamSize=document.getElementById('pTeamSize')?.value.trim()||''; info.languages=document.getElementById('pLanguages')?.value.trim()||''; info.timeline=document.getElementById('pTimeline')?.value.trim()||''; if(!info.budget||!info.teamSize||!info.languages||!info.timeline){ toast('请填写所有必填项','error'); return; } state.projectInfo=info; state.step=4; render(); window.scrollTo(0,0); }
 function selectBudget(bid){ state.budget=bid; render(); }
@@ -579,6 +582,8 @@ function submitActionForm(opt){
     email: document.getElementById('optEmail')?.value||'',
     note: document.getElementById('optNote')?.value||'',
     industry: state.industry, scenes: state.scenes, budget: state.budget, pains: state.pains,
+    projectInfo: state.projectInfo,
+    regId: state.regId||'',
     time: new Date().toLocaleString('zh-CN')
   };
   const leads=JSON.parse(localStorage.getItem('ruanan_leads')||'[]'); leads.push(data);
