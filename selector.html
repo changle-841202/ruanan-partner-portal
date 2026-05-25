@@ -8,20 +8,22 @@
 *{margin:0;padding:0;box-sizing:border-box;font-family:'PingFang SC','Microsoft YaHei','Helvetica Neue',sans-serif}
 body{background:linear-gradient(135deg,#f0f4f8 0%,#e8edf2 100%);min-height:100vh}
 :root{
-  --blue:#1D4699;--blue-light:#E8EEF8;--red:#C00000;--red-light:#FEF2F2;
+  --blue:#1D4699;--blue-light:#E8EEF8;--blue-dark:#15357a;
+  --red:#C00000;--red-light:#FEF2F2;
   --green:#00B050;--green-dark:#20A675;--green-light:#D3F4E6;
   --teal:#007983;--purple:#A850B6;
   --text:#7E7E7E;--text-dark:#505050;--text-darker:#252525;
   --bg:#FFFFFF;--bg-card:#F8FAFC;--border:#E2E8F0;
   --shadow:0 1px 3px rgba(0,0,0,0.06);--shadow-lg:0 10px 40px rgba(0,0,0,0.1);
+  --radius:14px;
 }
-/* Header */
+
+/* Topbar */
 .topbar{background:#fff;border-bottom:1px solid var(--border);padding:0 24px;height:64px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100}
-.logo{display:flex;align-items:center;gap:10px;font-weight:800;font-size:18px;color:var(--blue)}
+.logo{display:flex;align-items:center;gap:10px;font-weight:800;font-size:18px;color:var(--blue);text-decoration:none}
 .logo-icon{width:36px;height:36px;border-radius:8px;background:linear-gradient(135deg,#1D4699,#00B050);display:flex;align-items:center;justify-content:center;color:#fff;font-weight:900;font-size:16px}
-.topbar-actions{display:flex;align-items:center;gap:12px}
 .btn{padding:8px 20px;border-radius:10px;font-weight:600;font-size:14px;cursor:pointer;border:none;transition:all 0.2s;display:inline-flex;align-items:center;gap:6px;text-decoration:none}
-.btn-primary{background:linear-gradient(135deg,#1D4699,#1a3f8a);color:#fff;box-shadow:0 2px 8px rgba(29,70,153,0.25)}
+.btn-primary{background:linear-gradient(135deg,#1D4699,#15357a);color:#fff;box-shadow:0 2px 8px rgba(29,70,153,0.25)}
 .btn-primary:hover{transform:translateY(-1px);box-shadow:0 4px 16px rgba(29,70,153,0.35)}
 .btn-outline{background:#fff;color:var(--text-dark);border:1px solid var(--border)}
 .btn-outline:hover{background:var(--bg-card)}
@@ -29,79 +31,93 @@ body{background:linear-gradient(135deg,#f0f4f8 0%,#e8edf2 100%);min-height:100vh
 .btn-red{background:var(--red);color:#fff}
 .btn-lg{padding:12px 32px;font-size:16px;border-radius:12px}
 .btn-sm{padding:5px 14px;font-size:13px;border-radius:8px}
+.btn:disabled{opacity:0.45;cursor:not-allowed;pointer-events:none}
 
 /* Layout */
-.container{max-width:960px;margin:0 auto;padding:32px 20px}
+.container{max-width:960px;margin:0 auto;padding:28px 20px}
 
-/* Steps indicator */
-.steps{display:flex;justify-content:center;margin-bottom:40px;gap:4px}
-.step-dot{width:12px;height:12px;border-radius:50%;background:var(--border);transition:all 0.3s}
-.step-dot.active{background:var(--blue);box-shadow:0 0 0 4px var(--blue-light)}
-.step-dot.done{background:var(--green)}
-.step-line{width:40px;height:2px;background:var(--border);align-self:center;transition:all 0.3s}
-.step-line.done{background:var(--green)}
+/* Steps bar */
+.steps-bar{display:flex;align-items:center;justify-content:center;margin-bottom:32px;gap:0}
+.step-item{display:flex;align-items:center;gap:8px;font-size:13px;color:var(--text);font-weight:500;white-space:nowrap}
+.step-num{width:28px;height:28px;border-radius:50%;background:var(--border);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:13px;flex-shrink:0;transition:all 0.3s}
+.step-num.active{background:var(--blue);box-shadow:0 0 0 4px var(--blue-light)}
+.step-num.done{background:var(--green);box-shadow:none}
+.step-arrow{color:var(--border);margin:0 8px;font-size:16px;transition:all 0.3s}
+.step-arrow.done{color:var(--green)}
 
-/* Cards */
-.card{background:#fff;border-radius:16px;padding:32px;box-shadow:var(--shadow);margin-bottom:24px;animation:slideUp 0.4s ease}
-.card-sm{padding:20px}
+/* Card */
+.card{background:#fff;border-radius:16px;padding:32px;box-shadow:var(--shadow);margin-bottom:20px;animation:slideUp 0.35s ease}
 @keyframes slideUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
-.section-title{font-size:22px;font-weight:800;color:var(--text-darker);margin-bottom:6px}
-.section-sub{font-size:14px;color:var(--text);margin-bottom:24px}
+.sec-title{font-size:22px;font-weight:800;color:var(--text-darker);margin-bottom:4px}
+.sec-sub{font-size:14px;color:var(--text);margin-bottom:24px;line-height:1.6}
+.sec-label{font-size:12px;color:var(--text);text-transform:uppercase;letter-spacing:1px;margin-bottom:8px;font-weight:600}
 
 /* Industry grid */
-.industry-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
-.industry-card{border:2px solid var(--border);border-radius:14px;padding:20px 16px;cursor:pointer;text-align:center;transition:all 0.25s;background:#fff}
-.industry-card:hover{border-color:var(--blue);box-shadow:0 4px 16px rgba(29,70,153,0.1);transform:translateY(-2px)}
-.industry-card.selected{border-color:var(--blue);background:var(--blue-light);box-shadow:0 0 0 4px rgba(29,70,153,0.08)}
-.industry-icon{font-size:36px;margin-bottom:8px}
-.industry-name{font-weight:700;font-size:15px;color:var(--text-darker);margin-bottom:4px}
-.industry-reg{font-size:11px;color:var(--text);line-height:1.4}
+.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.grid2{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}
+.grid4{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
+.ind-card{border:2px solid var(--border);border-radius:var(--radius);padding:18px 14px;cursor:pointer;text-align:center;transition:all 0.25s;background:#fff}
+.ind-card:hover{border-color:var(--blue);box-shadow:0 4px 16px rgba(29,70,153,0.1);transform:translateY(-2px)}
+.ind-card.selected{border-color:var(--blue);background:var(--blue-light);box-shadow:0 0 0 4px rgba(29,70,153,0.08)}
+.ind-icon{font-size:34px;margin-bottom:6px}
+.ind-name{font-weight:700;font-size:14px;color:var(--text-darker)}
+.ind-reg{font-size:11px;color:var(--text);margin-top:4px;line-height:1.3}
 
-/* Product selection */
-.product-list{display:flex;flex-direction:column;gap:12px}
-.product-item{border:2px solid var(--border);border-radius:14px;padding:20px 24px;display:flex;align-items:center;gap:16px;cursor:pointer;transition:all 0.25s}
-.product-item:hover{border-color:var(--green)}
-.product-item.selected{border-color:var(--green);background:var(--green-light)}
-.product-check{width:24px;height:24px;border-radius:50%;border:2px solid var(--border);display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:all 0.2s}
-.product-item.selected .product-check{background:var(--green);border-color:var(--green)}
-.product-check::after{content:'✓';color:#fff;font-weight:700;font-size:14px;display:none}
-.product-item.selected .product-check::after{display:block}
-.product-info{flex:1}
-.product-name{font-weight:700;font-size:16px;color:var(--text-darker);margin-bottom:2px}
-.product-brand{font-size:13px;color:var(--blue);font-weight:600;margin-bottom:4px}
-.product-desc{font-size:13px;color:var(--text);line-height:1.5}
-.product-price{font-size:13px;color:var(--green-dark);font-weight:600;white-space:nowrap}
+/* Scenario tags */
+.scene-group{margin-bottom:20px}
+.scene-group-title{font-size:15px;font-weight:700;color:var(--text-darker);margin-bottom:10px;display:flex;align-items:center;gap:8px}
+.scene-group-title .icon{font-size:20px}
+.scene-tags{display:flex;flex-wrap:wrap;gap:8px}
+.scene-tag{border:2px solid var(--border);border-radius:10px;padding:10px 16px;cursor:pointer;font-size:13px;font-weight:500;color:var(--text-dark);transition:all 0.2s;background:#fff;display:flex;align-items:center;gap:6px}
+.scene-tag:hover{border-color:var(--green);background:#f8fdf9}
+.scene-tag.selected{border-color:var(--green);background:var(--green-light);color:var(--green-dark);font-weight:600}
+.scene-tag .dot{width:8px;height:8px;border-radius:50%;background:var(--border);transition:all 0.2s}
+.scene-tag.selected .dot{background:var(--green)}
+.scene-tag.desc{font-size:11px;color:var(--text);font-weight:400;margin-top:2px}
 
-/* Config */
-.config-row{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px}
-.config-group label{display:block;font-size:14px;font-weight:600;color:var(--text-darker);margin-bottom:6px}
-.config-group select,.config-group input{width:100%;border:1px solid var(--border);border-radius:10px;padding:10px 14px;font-size:14px;outline:none;transition:all 0.2s}
-.config-group select:focus,.config-group input:focus{border-color:var(--blue);box-shadow:0 0 0 3px rgba(29,70,153,0.08)}
+/* Budget range */
+.budget-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
+.budget-card{border:2px solid var(--border);border-radius:var(--radius);padding:20px 14px;cursor:pointer;text-align:center;transition:all 0.25s;background:#fff}
+.budget-card:hover{border-color:var(--blue)}
+.budget-card.selected{border-color:var(--blue);background:var(--blue-light);box-shadow:0 0 0 4px rgba(29,70,153,0.08)}
+.budget-range{font-size:20px;font-weight:800;color:var(--blue);margin-bottom:4px}
+.budget-label{font-size:12px;color:var(--text)}
+.budget-desc{font-size:11px;color:var(--text);margin-top:6px}
 
-/* Quote result */
-.quote-header{text-align:center;padding:20px 0}
-.quote-total{font-size:48px;font-weight:900;color:var(--blue);line-height:1}
-.quote-total-label{font-size:14px;color:var(--text);margin-top:4px}
-.quote-items{margin:20px 0}
-.quote-item{display:flex;justify-content:space-between;align-items:center;padding:12px 0;border-bottom:1px solid var(--border)}
-.quote-item-name{font-weight:600;color:var(--text-darker)}
-.quote-item-price{font-weight:700;color:var(--green-dark)}
-.quote-discount{background:var(--green-light);border-radius:8px;padding:12px 16px;color:var(--green-dark);font-weight:600;font-size:14px;margin-top:8px}
+/* Pain points */
+.pain-cards{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-bottom:16px}
+.pain-card{border:2px solid var(--border);border-radius:var(--radius);padding:16px;cursor:pointer;transition:all 0.25s;background:#fff;text-align:left}
+.pain-card:hover{border-color:var(--red)}
+.pain-card.selected{border-color:var(--red);background:var(--red-light)}
+.pain-card .pain-icon{font-size:24px;margin-bottom:6px}
+.pain-card .pain-title{font-weight:600;font-size:14px;color:var(--text-darker);margin-bottom:4px}
+.pain-card .pain-desc{font-size:12px;color:var(--text);line-height:1.5}
 
-/* Compliance section */
-.compliance-card{border:2px solid var(--border);border-radius:14px;padding:20px;cursor:pointer;transition:all 0.25s;margin-bottom:12px}
-.compliance-card:hover{border-color:var(--blue)}
-.compliance-card.expanded{border-color:var(--blue)}
-.compliance-title{font-weight:700;font-size:16px;color:var(--text-darker);margin-bottom:4px}
-.compliance-summary{font-size:13px;color:var(--text);margin-bottom:8px}
-.compliance-detail{display:none;margin-top:12px;padding-top:12px;border-top:1px solid var(--border);font-size:13px;color:var(--text-dark);line-height:1.8}
-.compliance-card.expanded .compliance-detail{display:block}
+/* Result */
+.result-header{text-align:center;padding:16px 0 24px}
+.result-title{font-size:24px;font-weight:800;color:var(--text-darker)}
+.result-sub{font-size:14px;color:var(--text);margin-top:4px}
+.rec-product{border:1px solid var(--border);border-radius:var(--radius);padding:20px 24px;margin-bottom:12px;background:var(--bg-card)}
+.rec-product .rec-name{font-weight:700;font-size:17px;color:var(--text-darker);margin-bottom:4px}
+.rec-product .rec-brand{font-size:13px;color:var(--blue);font-weight:600;margin-bottom:8px}
+.rec-product .rec-features{display:flex;flex-wrap:wrap;gap:6px;margin:8px 0}
+.rec-feature{font-size:11px;padding:3px 10px;background:var(--green-light);color:var(--green-dark);border-radius:6px;font-weight:500}
+.rec-product .rec-scene{font-size:12px;color:var(--teal);margin-top:8px}
+.rec-price-box{text-align:right;flex-shrink:0}
+.rec-price{font-size:22px;font-weight:900;color:var(--blue)}
+.rec-price-label{font-size:12px;color:var(--text)}
 
-/* Contact section */
-.contact-form{max-width:480px}
-.form-group{margin-bottom:16px}
-.form-group label{display:block;font-size:14px;font-weight:600;color:var(--text-darker);margin-bottom:6px}
-.form-group input,.form-group select,.form-group textarea{width:100%;border:1px solid var(--border);border-radius:10px;padding:10px 14px;font-size:14px;outline:none;transition:all 0.2s}
+/* Quote summary */
+.quote-card{background:linear-gradient(135deg,#1D4699,#1a3f8a);color:#fff;border-radius:16px;padding:28px 32px;margin-bottom:20px}
+.quote-card .total{font-size:44px;font-weight:900;line-height:1;margin:8px 0}
+.quote-card .total-label{font-size:14px;opacity:0.8}
+.quote-note{background:var(--bg-card);border-radius:12px;padding:16px 20px;font-size:13px;color:var(--text-dark);line-height:1.8}
+
+/* Form */
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.form-group{margin-bottom:14px}
+.form-group label{display:block;font-size:13px;font-weight:600;color:var(--text-darker);margin-bottom:5px}
+.form-group input,.form-group select,.form-group textarea{width:100%;border:1px solid var(--border);border-radius:10px;padding:10px 14px;font-size:14px;outline:none;transition:all 0.2s;background:#fff}
 .form-group input:focus,.form-group select:focus,.form-group textarea:focus{border-color:var(--blue);box-shadow:0 0 0 3px rgba(29,70,153,0.08)}
 .form-group textarea{resize:vertical;min-height:80px}
 
@@ -111,295 +127,364 @@ body{background:linear-gradient(135deg,#f0f4f8 0%,#e8edf2 100%);min-height:100vh
 .toast.error{background:var(--red)}
 @keyframes slideIn{from{opacity:0;transform:translateX(40px)}to{opacity:1;transform:translateX(0)}}
 
-/* Tabs */
-.tabs{display:flex;gap:4px;background:var(--bg-card);border-radius:12px;padding:4px;margin-bottom:24px}
-.tab{padding:8px 20px;border-radius:10px;font-size:14px;font-weight:600;cursor:pointer;color:var(--text);transition:all 0.2s;border:none;background:none}
-.tab.active{background:#fff;color:var(--blue);box-shadow:0 1px 3px rgba(0,0,0,0.08)}
-.tab-content{display:none;animation:slideUp 0.3s ease}
-.tab-content.active{display:block}
+/* progress */
+.progress-bar{height:4px;background:var(--border);border-radius:2px;margin-bottom:28px;transition:all 0.3s}
+.progress-fill{height:100%;background:linear-gradient(90deg,#1D4699,#00B050);border-radius:2px;transition:all 0.4s ease}
 
-/* Responsive */
 @media(max-width:768px){
-  .industry-grid{grid-template-columns:repeat(2,1fr)}
-  .config-row{grid-template-columns:1fr}
-  .product-item{flex-direction:column;align-items:flex-start}
-  .container{padding:16px}
+  .grid3,.grid4{grid-template-columns:repeat(2,1fr)}
+  .grid2,.form-row{grid-template-columns:1fr}
+  .budget-grid{grid-template-columns:repeat(2,1fr)}
+  .pain-cards{grid-template-columns:1fr}
   .card{padding:20px}
+  .steps-bar{flex-wrap:wrap;gap:4px}
+  .step-arrow{display:none}
 }
 </style>
 </head>
 <body>
 
 <header class="topbar">
-  <div class="logo">
-    <div class="logo-icon">软</div>
-    <span>软安科技 · 智能选型</span>
-  </div>
-  <div class="topbar-actions">
-    <button class="btn btn-outline btn-sm" onclick="resetAll()">🔄 重新开始</button>
-  </div>
+  <a class="logo" href="#"><div class="logo-icon">软</div>软安科技 · 智能选型</a>
+  <button class="btn btn-outline btn-sm" onclick="resetAll()">🔄 重新开始</button>
 </header>
 
-<div class="container" id="app">
-  <!-- Steps -->
-  <div class="steps">
-    <div id="dot1" class="step-dot active"></div>
-    <div id="line1" class="step-line"></div>
-    <div id="dot2" class="step-dot"></div>
-    <div id="line2" class="step-line"></div>
-    <div id="dot3" class="step-dot"></div>
-    <div id="line3" class="step-line"></div>
-    <div id="dot4" class="step-dot"></div>
+<div class="container">
+  <div class="progress-bar"><div class="progress-fill" id="progressBar" style="width:20%"></div></div>
+  <div class="steps-bar">
+    <div class="step-item"><div class="step-num" id="stepNum1">1</div>选择行业</div>
+    <span class="step-arrow" id="stepArr1">›</span>
+    <div class="step-item"><div class="step-num" id="stepNum2">2</div>需求场景</div>
+    <span class="step-arrow" id="stepArr2">›</span>
+    <div class="step-item"><div class="step-num" id="stepNum3">3</div>预算范围</div>
+    <span class="step-arrow" id="stepArr3">›</span>
+    <div class="step-item"><div class="step-num" id="stepNum4">4</div>痛点描述</div>
+    <span class="step-arrow" id="stepArr4">›</span>
+    <div class="step-item"><div class="step-num" id="stepNum5">5</div>方案推荐</div>
   </div>
-
   <div id="mainContent"></div>
 </div>
 
 <script>
-// ===== 产品知识库 =====
+// ===== 产品库 =====
 const PRODUCTS = {
-  SAST:{name:'SAST 静态代码分析',brand:'静兮',desc:'AI驱动，30+语言，MISRA/CERT/GJB合规，增量扫描，CI/CD集成',price:{min:15,max:30},icon:'🔍'},
-  SCA:{name:'SCA 软件成分分析',brand:'源兮',desc:'SBOM生成，开源漏洞追踪，许可证合规，依赖图谱分析',price:{min:12,max:25},icon:'📦'},
-  FIRMWARE:{name:'固件安全测试',brand:'侦兮',desc:'芯片级分析，100+平台解包，安全启动验证，AI Fuzz',price:{min:18,max:35},icon:'🔐'},
-  LLM:{name:'大模型安全测试',brand:'元安',desc:'提示注入检测，越狱测试，数据泄露评估，RAG安全',price:{min:20,max:40},icon:'🤖'},
-  AI_SAST:{name:'AI SAST 智能分析',brand:'灵析',desc:'LLM代码理解，遗留代码审计，自动修复，跨文件分析',price:{min:25,max:50},icon:'✨'},
+  SAST:{id:'SAST',name:'SAST 静态代码分析',brand:'静兮',icon:'🔍',category:'代码安全',desc:'基于AI引擎的新一代静态应用安全测试工具',price:50,
+    features:['30+语言支持','AI去误报引擎','MISRA/CERT/GJB合规','CI/CD集成','增量秒级扫描','IDE实时检测','中文合规报告','涉密离线部署'],
+    scenes:['SAST'],tags:['代码审计','静态分析','安全左移','DevSecOps']},
+  SCA:{id:'SCA',name:'SCA 软件成分分析',brand:'源兮',icon:'📦',category:'供应链安全',desc:'软件物料清单自动生成与开源风险管理平台',price:50,
+    features:['SBOM自动生成','CNVD/CNNVD/CVE多源漏洞','许可证合规检测','依赖图谱分析','供应链投毒检测','断网离线同步','SPDX/CycloneDX'],
+    scenes:['SCA'],tags:['开源治理','SBOM','供应链安全','组件安全']},
+  FIRMWARE:{id:'FIRMWARE',name:'固件安全测试',brand:'侦兮',icon:'🔐',category:'固件安全',desc:'芯片级固件安全分析与漏洞挖掘平台',price:50,
+    features:['100+芯片平台解包','安全启动链验证','BootROM审计','TEE安全分析','AI Fuzz框架','RISC-V支持','通信协议分析','涉密离线'],
+    scenes:['FIRMWARE'],tags:['固件分析','芯片安全','IoT安全','嵌入式']},
+  LLM:{id:'LLM',name:'大模型安全测试',brand:'元安',icon:'🤖',category:'AI安全',desc:'AI大模型全生命周期安全测试与合规评估',price:50,
+    features:['提示注入检测','越狱红队测试','数据泄露评估','模型鲁棒性测试','RAG安全检测','偏见与公平性','合规自评估报告','持续安全监控'],
+    scenes:['LLM'],tags:['AI安全','大模型','提示注入','对齐评估']},
+  AI_SAST:{id:'AI_SAST',name:'AI SAST 智能分析',brand:'灵析',icon:'✨',category:'代码安全',desc:'LLM驱动的智能代码审计与自动修复',price:50,
+    features:['LLM语义理解','自然语言查询','遗留代码批量审计','自动修复建议','跨文件漏洞检测','技术债务评估','安全编码助手','私有化部署'],
+    scenes:['AI_SAST'],tags:['AI审计','遗留代码','自动修复','代码理解']},
 };
 
+// ===== 行业数据 =====
 const INDUSTRIES = {
-  汽车:{icon:'🚗',reg:'UN R155/R156\nISO/SAE 21434',rec:['SAST','SCA','FIRMWARE'],painPoints:'供应链长、代码量激增，需满足R155全链路审计'},
-  芯片半导体:{icon:'🔲',reg:'密评/GB/T 18336\nNIST FIPS 140',rec:['FIRMWARE','SAST','SCA'],painPoints:'安全启动链验证复杂，RISC-V生态工具不足'},
-  消费电子:{icon:'📱',reg:'等保2.0\n个人信息保护法',rec:['SAST','SCA','FIRMWARE'],painPoints:'迭代快、开源组件广、隐私泄露风险高'},
-  金融:{icon:'🏦',reg:'等保2.0三级\nJR/T 0071',rec:['SAST','SCA','LLM'],painPoints:'AI应用激增，监管对供应链安全要求持续加强'},
-  军工:{icon:'🛡️',reg:'GJB 8114/5369\n涉密信息系统',rec:['SAST','FIRMWARE','AI_SAST'],painPoints:'涉密离线部署，大量遗留代码需审计'},
-  政府:{icon:'🏛️',reg:'等保2.0\n关基保护条例',rec:['SAST','SCA','LLM'],painPoints:'信创环境工具匮乏，外包代码质量参差不齐'},
-  医疗:{icon:'🏥',reg:'医疗器械网络安全\n个人信息保护法',rec:['SAST','SCA'],painPoints:'SaMD注册需安全审计，设备固件安全要求高'},
-  教育:{icon:'🎓',reg:'等保2.0\n教育App备案',rec:['SAST','SCA'],painPoints:'预算有限，涉及大量学生个人信息'},
-  电子通信:{icon:'📡',reg:'3GPP SECAM\n等保2.0',rec:['FIRMWARE','SAST','SCA'],painPoints:'5G设备软件化，通信设备供应链安全'},
+  汽车:{icon:'🚗',reg:'UN R155/R156 · ISO/SAE 21434 · GB/T 44495',pain:'供应链涉及数百家Tier 1/2供应商，车载代码量激增（单辆高端车超1亿行），需满足R155法规要求的全链路软件安全审计和OTA更新安全管理。',rec:['SAST','SCA','FIRMWARE','AI_SAST']},
+  芯片半导体:{icon:'🔲',reg:'密评 · GB/T 18336 · NIST FIPS 140',pain:'安全启动链验证链路长，RISC-V生态工具不成熟，芯片流片前需完成BootROM安全审计以避免不可修复的硬件漏洞。',rec:['FIRMWARE','SAST','SCA']},
+  消费电子:{icon:'📱',reg:'等保2.0 · 个人信息保护法 · CCC认证',pain:'产品迭代周期短（2-4周），安全测试常被压缩。智能设备大量使用开源组件和第三方SDK，供应链透明度低，用户隐私泄露风险高。',rec:['SAST','SCA','FIRMWARE']},
+  金融:{icon:'🏦',reg:'等保2.0三级 · JR/T 0071 · PCI DSS',pain:'监管对软件供应链安全要求持续收紧，开源组件漏洞（如Log4j）需72小时内完成应急响应。AI大模型应用激增，大模型安全成为新兴监管重点。',rec:['SAST','SCA','LLM']},
+  军工:{icon:'🛡️',reg:'GJB 8114/5369 · 涉密信息系统安全保密规定',pain:'必须完全离线部署，无法使用联网工具。大量90年代至今的遗留C/C++/汇编代码缺乏文档和测试，人工审计效率极低。国产化替代要求所有工具来自国内供应商。',rec:['SAST','FIRMWARE','AI_SAST']},
+  政府:{icon:'🏛️',reg:'等保2.0 · 关基保护条例 · 信创目录',pain:'信创环境（国产CPU+国产OS）安全工具生态匮乏，关键信息基础设施的软件供应链需满足自主可控要求，政务系统大量依赖外包开发。',rec:['SAST','SCA','LLM']},
+  医疗:{icon:'🏥',reg:'医疗器械网络安全注册审查 · 个人信息保护法',pain:'医疗器械软件（SaMD）注册需提供安全审计报告。医疗设备固件涉及患者安全，开源组件（DICOM库、通信协议栈）使用普遍需合规管理。',rec:['SAST','SCA']},
+  教育:{icon:'🎓',reg:'等保2.0 · 教育App备案管理办法',pain:'安全投入预算有限，但涉及大量学生个人信息。开源学习管理系统（Moodle等）部署广泛，需要高性价比的安全方案。',rec:['SAST','SCA']},
+  电子通信:{icon:'📡',reg:'3GPP SECAM · 关基保护条例 · 商用密码应用',pain:'5G网络设备软件化趋势下，基站和核心网设备固件/软件安全审计需求激增。通信设备供应链涉及全球数百家供应商，需满足运营商准入要求。',rec:['FIRMWARE','SAST','SCA']},
 };
 
-const DEPLOY = {
-  local:{name:'本地部署',desc:'客户自有服务器',factor:1.0,time:'1-2周'},
-  private:{name:'私有云',desc:'客户私有云环境',factor:0.95,time:'1-2周'},
-  secure:{name:'涉密离线',desc:'完全离线涉密环境',factor:1.15,time:'2-4周'},
-  saas:{name:'SaaS试用',desc:'云端SaaS模式',factor:0.80,time:'即时'},
+// ===== 场景库 =====
+const SCENARIOS = {
+  compliance:[
+    {id:'c1',title:'法规合规审计',desc:'需要出具满足某法规要求的安全审计报告',tags:['R155','等保','GJB','ISO 21434']},
+    {id:'c2',title:'供应链安全合规',desc:'管理供应商软件的SBOM和开源合规',tags:['SBOM','许可证','供应链']},
+    {id:'c3',title:'信创国产化替代',desc:'在信创环境中部署国产安全工具',tags:['信创','国产化','自主可控']},
+    {id:'c4',title:'涉密环境安全检测',desc:'在完全离线涉密环境中进行代码安全审计',tags:['离线','涉密','军工']},
+    {id:'c5',title:'行业认证准备',desc:'为ISO/ASPICE/功能安全等认证提供安全证据',tags:['ISO 26262','ASPICE','IEC 62304']},
+  ],
+  tool:[
+    {id:'t1',title:'代码安全扫描',desc:'需要自动化的代码漏洞和合规检测工具',tags:['SAST','漏洞检测','编码规范']},
+    {id:'t2',title:'开源组件管理',desc:'需要管理第三方和开源组件的安全风险',tags:['SCA','组件安全','漏洞追踪']},
+    {id:'t3',title:'固件安全分析',desc:'需要对嵌入式/IoT/ECU固件进行安全审计',tags:['固件解包','启动验证','Fuzz']},
+    {id:'t4',title:'AI大模型安全',desc:'需要对部署的大模型进行安全测试和合规评估',tags:['提示注入','越狱检测','隐私评估']},
+    {id:'t5',title:'遗留代码审计',desc:'需要对大量老代码进行批量安全审计和技术债务评估',tags:['遗留代码','技术债','批量审计']},
+    {id:'t6',title:'DevSecOps集成',desc:'需要在CI/CD流水线中集成安全检测能力',tags:['CI/CD','自动化','增量扫描']},
+  ],
+  service:[
+    {id:'s1',title:'代码安全审计服务',desc:'委托我们的安全专家对代码进行深度审计',tags:['专家审计','深度分析','审计报告']},
+    {id:'s2',title:'固件安全测试服务',desc:'委托对芯片/设备固件进行专业安全测试',tags:['芯片测试','漏洞挖掘','安全评估']},
+    {id:'s3',title:'渗透测试服务',desc:'对应用系统进行黑盒/白盒渗透测试',tags:['渗透测试','红队','攻击模拟']},
+    {id:'s4',title:'合规咨询服务',desc:'提供法规合规差距分析和整改方案咨询',tags:['R155','等保','GJB','合规咨询']},
+    {id:'s5',title:'安全培训服务',desc:'为开发团队提供安全编码和工具使用培训',tags:['安全培训','SDL','赋能']},
+    {id:'s6',title:'驻场安全支持',desc:'安全专家驻场协助安全检测和漏洞修复',tags:['驻场','应急响应','持续支持']},
+  ],
 };
 
-const COMPLIANCE = {
-  R155:{title:'UN R155 — 车辆网络安全',summary:'要求汽车制造商建立CSMS，对车辆全生命周期进行软件安全审计',detail:'<b>SAST</b>：扫描车载代码，MISRA合规，生成审计报告<br><b>SCA</b>：整车SBOM，供应商组件追踪<br><b>固件安全</b>：ECU安全启动验证<br><b>AI SAST</b>：TARA威胁分析辅助<br><br><b>实施周期</b>：4-6周'},
-  R156:{title:'UN R156 — 车辆软件更新',summary:'要求建立SUMS，确保OTA更新不破坏车辆安全性和合规性',detail:'<b>SAST</b>：OTA构建时自动增量扫描<br><b>SCA</b>：对比OTA前后SBOM变化<br><b>固件安全</b>：验证OTA固件签名完整性<br><br><b>实施</b>：集成到CI/CD流水线'},
-  GJB8114:{title:'GJB 8114 — 军用软件安全',summary:'军用软件安全检测标准，覆盖代码缺陷、漏洞、后门',detail:'<b>SAST</b>：内置GJB 8114规则集，涉密离线运行<br><b>AI SAST</b>：批量审计遗留C/C++/汇编代码<br><br><b>部署</b>：完全离线单机运行'},
-  DJCP:{title:'等保2.0 — 网络安全等级保护',summary:'信息系统等级化安全防护，三级及以上需代码和供应链审计',detail:'<b>SAST</b>：满足"安全计算环境"应用检测<br><b>SCA</b>：满足"供应链安全"要求<br><b>大模型安全</b>：AI应用安全评估<br><br><b>兼容</b>：信创环境(UOS/麒麟+飞腾/鲲鹏)'},
-};
+// ===== 预算区间 =====
+const BUDGET_RANGES = [
+  {id:'b1',range:'20万以下',desc:'适合小型团队<br>或单产品试用',factor:0.3,maxProducts:1},
+  {id:'b2',range:'20-50万',desc:'适合中型团队<br>1-2个产品模块',factor:0.6,maxProducts:2},
+  {id:'b3',range:'50-100万',desc:'适合大型团队<br>2-3个产品组合',factor:1.0,maxProducts:3},
+  {id:'b4',range:'100万以上',desc:'适合企业级<br>全栈安全方案',factor:1.5,maxProducts:99},
+];
 
-let state = { step:1, industry:null, products:[], deploy:'local', scale:'medium' };
+// ===== State =====
+let state = {step:1,industry:null,scenes:[],budget:null,pains:[],customPain:'',products:[],deploy:'local'};
 
-// ===== Render =====
+// ===== Render Engine =====
 function render(){
   const app = document.getElementById('mainContent');
-  const { step } = state;
-  updateSteps();
-  if(step===1) app.innerHTML = renderStep1();
-  else if(step===2) app.innerHTML = renderStep2();
-  else if(step===3) app.innerHTML = renderStep3();
-  else if(step===4) app.innerHTML = renderStep4();
+  const {step} = state;
+  updateUI();
+  if(step===1) app.innerHTML = rStep1();
+  else if(step===2) app.innerHTML = rStep2();
+  else if(step===3) app.innerHTML = rStep3();
+  else if(step===4) app.innerHTML = rStep4();
+  else if(step===5) app.innerHTML = rStep5();
 }
 
-function updateSteps(){
-  for(let i=1;i<=4;i++){
-    const dot = document.getElementById('dot'+i);
-    dot.className = 'step-dot' + (i===state.step?' active':i<state.step?' done':'');
-    if(i<4) document.getElementById('line'+i).className = 'step-line' + (i<state.step?' done':'');
+function updateUI(){
+  // progress
+  document.getElementById('progressBar').style.width = (state.step*20)+'%';
+  // step nums
+  for(let i=1;i<=5;i++){
+    const el=document.getElementById('stepNum'+i);
+    el.className='step-num'+(i===state.step?' active':i<state.step?' done':'');
+    if(i<5) document.getElementById('stepArr'+i).className='step-arrow'+(i<state.step?' done':'');
   }
 }
 
-// Step 1: Select Industry
-function renderStep1(){
-  let html = `<div class="card"><h2 class="section-title">选择客户所属行业</h2><p class="section-sub">选择行业后，系统将自动推荐最匹配的安全产品组合</p><div class="industry-grid">`;
+// ===== Step 1: 行业 =====
+function rStep1(){
+  let h=`<div class="card"><div class="sec-label">STEP 1 · 选择行业</div><h2 class="sec-title">选择客户所属行业</h2><p class="sec-sub">系统将根据行业自动匹配对应的法规要求和产品推荐策略</p><div class="grid3">`;
   for(const [key,ind] of Object.entries(INDUSTRIES)){
-    html += `<div class="industry-card${state.industry===key?' selected':''}" onclick="selectIndustry('${key}')">
-      <div class="industry-icon">${ind.icon}</div>
-      <div class="industry-name">${key}</div>
-      <div class="industry-reg">${ind.reg.replace(/\n/g,'<br>')}</div>
+    h+=`<div class="ind-card${state.industry===key?' selected':''}" onclick="state.industry=key;state.scenes=[];state.products=[];state.budget=null;state.pains=[];render()">
+      <div class="ind-icon">${ind.icon}</div>
+      <div class="ind-name">${key}</div>
+      <div class="ind-reg">${ind.reg}</div>
     </div>`;
   }
-  html += `</div></div>`;
-  html += `<div class="card"><div class="tabs"><button class="tab active" onclick="switchTab('compliance')">📋 合规标准</button><button class="tab" onclick="switchTab('compare')">⚔️ 产品对比</button></div>
-    <div id="tab-compliance" class="tab-content active">${renderComplianceList()}</div>
-    <div id="tab-compare" class="tab-content">${renderProductCompare()}</div>
-  </div>`;
+  h+=`</div></div>`;
   if(state.industry){
-    html += `<div style="text-align:center;margin-top:24px"><button class="btn btn-primary btn-lg" onclick="nextStep(2)">下一步：查看推荐方案 →</button></div>`;
-  }
-  return html;
-}
-
-function renderComplianceList(){
-  let h='';
-  for(const [key,c] of Object.entries(COMPLIANCE)){
-    h+=`<div class="compliance-card" onclick="this.classList.toggle('expanded')">
-      <div class="compliance-title">📋 ${c.title}</div>
-      <div class="compliance-summary">${c.summary}</div>
-      <div class="compliance-detail">${c.detail}</div>
-    </div>`;
+    const ind=INDUSTRIES[state.industry];
+    h+=`<div class="card" style="border-left:4px solid var(--blue)"><div style="font-weight:700;color:var(--text-darker);margin-bottom:6px">📋 ${state.industry}行业 · 合规要求</div><div style="font-size:13px;color:var(--text);line-height:1.8">${ind.reg}</div></div>`;
+    h+=`<div style="text-align:center;margin-top:16px"><button class="btn btn-primary btn-lg" onclick="goStep(2)">下一步：选择需求场景 →</button></div>`;
   }
   return h;
 }
 
-function renderProductCompare(){
-  let h=`<div style="overflow-x:auto"><table style="width:100%;border-collapse:collapse;font-size:13px">
-    <thead><tr style="background:var(--bg-card)"><th style="padding:12px;text-align:left">产品</th><th style="padding:12px;text-align:left">适用行业</th><th style="padding:12px;text-align:left">参考报价</th><th style="padding:12px;text-align:left">核心优势</th></tr></thead><tbody>`;
-  for(const [key,p] of Object.entries(PRODUCTS)){
-    const industries = Object.keys(INDUSTRIES).filter(k=>INDUSTRIES[k].rec.includes(key));
-    h+=`<tr style="border-bottom:1px solid var(--border)">
-      <td style="padding:12px;font-weight:700">${p.icon} ${p.name}<br><span style="color:var(--blue);font-size:12px">${p.brand}</span></td>
-      <td style="padding:12px;color:var(--text-dark)">${industries.slice(0,4).join('、')}${industries.length>4?'等':''}</td>
-      <td style="padding:12px;color:var(--green-dark);font-weight:600">${p.price.min}-${p.price.max}万/年</td>
-      <td style="padding:12px;color:var(--text-dark)">${p.desc}</td>
-    </tr>`;
-  }
-  h+=`</tbody></table></div>`;
-  return h;
-}
-
-// Step 2: Recommendations
-function renderStep2(){
+// ===== Step 2: 场景 =====
+function rStep2(){
   const ind = INDUSTRIES[state.industry];
-  const recs = ind.rec.map(k=>({key:k,...PRODUCTS[k]})).filter(p=>p.name);
-  let h=`<div class="card"><h2 class="section-title">${ind.icon} ${state.industry}行业 — 推荐方案</h2>
-    <p class="section-sub">📌 ${ind.painPoints}</p>
-    <div style="background:var(--blue-light);border-radius:12px;padding:16px;margin-bottom:20px;font-size:14px;color:var(--blue);font-weight:600">📋 适用法规：${ind.reg.replace(/\n/g,'、')}</div>
-    <h3 style="font-size:16px;font-weight:700;color:var(--text-darker);margin-bottom:12px">推荐产品组合（点击选择/取消）</h3>
-    <div class="product-list">`;
-  for(const p of recs){
-    const checked = state.products.includes(p.key);
-    h+=`<div class="product-item${checked?' selected':''}" onclick="toggleProduct('${p.key}')">
-      <div class="product-check"></div>
-      <div style="font-size:28px">${p.icon}</div>
-      <div class="product-info">
-        <div class="product-name">${p.name}</div>
-        <div class="product-brand">${p.brand}</div>
-        <div class="product-desc">${p.desc}</div>
-      </div>
-      <div class="product-price">${p.price.min}-${p.price.max}万/年</div>
-    </div>`;
+  let h=`<div class="card"><div class="sec-label">STEP 2 · 需求场景</div><h2 class="sec-title">选择需求场景 <span style="font-size:14px;color:var(--text);font-weight:400">（多选）</span></h2><p class="sec-sub">${ind.icon} ${state.industry}行业 · ${ind.pain}</p>`;
+
+  // 合规场景
+  h+=`<div class="scene-group"><div class="scene-group-title"><span class="icon">📋</span>合规与认证</div><div class="scene-tags">`;
+  for(const s of SCENARIOS.compliance){
+    h+=`<div class="scene-tag${state.scenes.includes(s.id)?' selected':''}" onclick="toggleScene('${s.id}')"><div class="dot"></div><div><div>${s.title}</div><div class="desc">${s.desc}</div></div></div>`;
   }
-  h+=`</div>`;
-  if(state.products.length===0) h+=`<p style="text-align:center;color:var(--red);margin-top:12px;font-size:14px">⚠️ 请至少选择一个产品</p>`;
+  h+=`</div></div>`;
+
+  // 工具需求
+  h+=`<div class="scene-group"><div class="scene-group-title"><span class="icon">🔧</span>工具需求</div><div class="scene-tags">`;
+  for(const s of SCENARIOS.tool){
+    h+=`<div class="scene-tag${state.scenes.includes(s.id)?' selected':''}" onclick="toggleScene('${s.id}')"><div class="dot"></div><div><div>${s.title}</div><div class="desc">${s.desc}</div></div></div>`;
+  }
+  h+=`</div></div>`;
+
+  // 测试服务
+  h+=`<div class="scene-group"><div class="scene-group-title"><span class="icon">🛠️</span>测试与服务</div><div class="scene-tags">`;
+  for(const s of SCENARIOS.service){
+    h+=`<div class="scene-tag${state.scenes.includes(s.id)?' selected':''}" onclick="toggleScene('${s.id}')"><div class="dot"></div><div><div>${s.title}</div><div class="desc">${s.desc}</div></div></div>`;
+  }
+  h+=`</div></div>`;
+
   h+=`</div>`;
   h+=`<div style="display:flex;gap:12px;justify-content:center">
-    <button class="btn btn-outline btn-lg" onclick="nextStep(1)">← 重新选择行业</button>
-    <button class="btn btn-primary btn-lg" onclick="nextStep(3)" ${state.products.length===0?'disabled style="opacity:0.5;cursor:not-allowed"':''}>下一步：配置方案 →</button>
+    <button class="btn btn-outline btn-lg" onclick="goStep(1)">← 重新选择行业</button>
+    <button class="btn btn-primary btn-lg" onclick="goStep(3)" ${state.scenes.length===0?'disabled':''}>下一步：选择预算范围 →</button>
   </div>`;
+  if(state.scenes.length===0) h+=`<p style="text-align:center;color:var(--red);font-size:13px;margin-top:8px">⚠️ 请至少选择一个需求场景</p>`;
   return h;
 }
 
-// Step 3: Configure
-function renderStep3(){
-  const deployOpts = Object.entries(DEPLOY).map(([k,v])=>`<option value="${k}" ${state.deploy===k?'selected':''}>${v.name} — ${v.desc} (${v.time})</option>`).join('');
-  const selectedProducts = state.products.map(k=>PRODUCTS[k]);
-  let h=`<div class="card"><h2 class="section-title">⚙️ 方案配置</h2><p class="section-sub">调整部署方式和团队规模，获取精准报价</p>`;
-  h+=`<div class="config-row">
-    <div class="config-group"><label>部署方式</label><select onchange="state.deploy=this.value;render()">${deployOpts}</select></div>
-    <div class="config-group"><label>团队规模</label><select onchange="state.scale=this.value;render()">
-      <option value="small" ${state.scale==='small'?'selected':''}>小型 (<100人) — 0.7x</option>
-      <option value="medium" ${state.scale==='medium'?'selected':''}>中型 (100-500人) — 1.0x</option>
-      <option value="large" ${state.scale==='large'?'selected':''}>大型 (500-2000人) — 1.3x</option>
-      <option value="enterprise" ${state.scale==='enterprise'?'selected':''}>超大型 (2000人+) — 1.8x</option>
-    </select></div>
-  </div>`;
-
-  // Preview
-  const quote = calcQuote();
-  h+=`<div style="background:var(--bg-card);border-radius:12px;padding:20px;margin-top:20px">
-    <h4 style="font-weight:700;color:var(--text-darker);margin-bottom:12px">📊 报价预览</h4>`;
-  for(const item of quote.items){
-    h+=`<div class="quote-item"><span class="quote-item-name">${item.icon} ${item.name} <span style="color:var(--blue)">${item.brand}</span></span><span class="quote-item-price">${item.range}万/年</span></div>`;
+// ===== Step 3: 预算 =====
+function rStep3(){
+  let h=`<div class="card"><div class="sec-label">STEP 3 · 预算范围</div><h2 class="sec-title">选择年度预算范围</h2><p class="sec-sub">系统将根据预算推荐最合适的产品组合方案</p><div class="budget-grid">`;
+  for(const b of BUDGET_RANGES){
+    h+=`<div class="budget-card${state.budget===b.id?' selected':''}" onclick="state.budget=b.id;render()">
+      <div class="budget-range">${b.range}</div>
+      <div class="budget-label">年度预算</div>
+      <div class="budget-desc">${b.desc}</div>
+    </div>`;
   }
-  const total = quote.items.reduce((s,i)=>s+i.min,0);
-  const totalMax = quote.items.reduce((s,i)=>s+i.max,0);
-  h+=`<div class="quote-discount">💡 ${quote.bundleDiscount} | ${DEPLOY[state.deploy].name}${quote.deployFactor!==1?' ('+(quote.deployFactor>1?'+':'')+Math.round((quote.deployFactor-1)*100)+'%)':''}</div>`;
-  h+=`<div style="text-align:center;margin-top:16px"><span style="font-size:14px;color:var(--text)">参考报价区间</span><br><span style="font-size:36px;font-weight:900;color:var(--blue)">${Math.round(total)}-${Math.round(totalMax)}万</span><span style="color:var(--text)">/年</span></div>`;
   h+=`</div></div>`;
   h+=`<div style="display:flex;gap:12px;justify-content:center">
-    <button class="btn btn-outline btn-lg" onclick="nextStep(2)">← 重新选择产品</button>
-    <button class="btn btn-green btn-lg" onclick="nextStep(4)">生成报价方案 →</button>
+    <button class="btn btn-outline btn-lg" onclick="goStep(2)">← 重新选择场景</button>
+    <button class="btn btn-primary btn-lg" onclick="goStep(4)" ${!state.budget?'disabled':''}>下一步：描述安全痛点 →</button>
   </div>`;
   return h;
 }
 
-// Step 4: Quote & Contact
-function renderStep4(){
-  const quote = calcQuote();
-  const total = quote.items.reduce((s,i)=>s+i.min,0);
-  const totalMax = quote.items.reduce((s,i)=>s+i.max,0);
-  let disc='';
-  if(total>=100)disc='5-7折 战略客户优惠';
-  else if(total>=50)disc='7-8折 中型项目优惠';
-  else if(total>=20)disc='8-9折 常规折扣';
-  else disc='9折起 视后续扩容再议';
-
-  let h=`<div class="card"><div class="quote-header">
-    <div style="font-size:28px;margin-bottom:8px">💰</div>
-    <h2 class="section-title">报价方案</h2>
-    <div class="quote-total">${Math.round(total)}-${Math.round(totalMax)}万</div>
-    <div class="quote-total-label">/年 · ${DEPLOY[state.deploy].name} · ${state.industry}行业</div>
-  </div>
-  <div class="quote-items">`;
-  for(const item of quote.items){
-    h+=`<div class="quote-item"><div>
-      <div class="quote-item-name">${item.icon} ${item.name}</div>
-      <div style="font-size:12px;color:var(--blue)">${item.brand} · ${item.desc}</div>
-    </div><div class="quote-item-price">${item.range}万/年</div></div>`;
+// ===== Step 4: 痛点 =====
+function rStep4(){
+  const ind = INDUSTRIES[state.industry];
+  const painOptions = [
+    {id:'p1',icon:'🐛',title:'代码漏洞频发',desc:'线上漏洞频发，缺乏系统化的代码安全检测手段'},
+    {id:'p2',icon:'⏰',title:'安全测试滞后',desc:'安全测试在发版前临时做，CI/CD中缺少自动化安全卡点'},
+    {id:'p3',icon:'📦',title:'开源组件不可见',desc:'不清楚用了哪些开源组件，出了Log4j这种漏洞无从排查'},
+    {id:'p4',icon:'📋',title:'合规压力大',desc:'客户或监管要求出具安全审计报告，但缺少系统化审计工具'},
+    {id:'p5',icon:'🏭',title:'供应商代码质量差',desc:'供应商交付的代码缺乏安全管控，质量参差不齐'},
+    {id:'p6',icon:'🔐',title:'固件/芯片安全盲区',desc:'嵌入式设备和芯片固件缺乏有效的安全检测手段'},
+    {id:'p7',icon:'🤖',title:'AI应用安全风险',desc:'部署了大模型应用，担心提示注入和数据泄露'},
+    {id:'p8',icon:'📜',title:'遗留代码无人懂',desc:'大量遗留代码缺乏文档和维护，存在未知安全风险'},
+  ];
+  let h=`<div class="card"><div class="sec-label">STEP 4 · 安全痛点</div><h2 class="sec-title">描述代码安全痛点 <span style="font-size:14px;color:var(--text);font-weight:400">（多选）</span></h2><p class="sec-sub">${ind.icon} ${state.industry}行业典型痛点：${ind.pain}</p>`;
+  h+=`<div class="pain-cards">`;
+  for(const p of painOptions){
+    h+=`<div class="pain-card${state.pains.includes(p.id)?' selected':''}" onclick="togglePain('${p.id}')">
+      <div class="pain-icon">${p.icon}</div>
+      <div class="pain-title">${p.title}</div>
+      <div class="pain-desc">${p.desc}</div>
+    </div>`;
   }
-  h+=`</div>
-  <div class="quote-discount">🏷️ 可申请特价：${disc}</div>
-  <div style="margin-top:8px;font-size:12px;color:var(--text)">📅 交付周期：${DEPLOY[state.deploy].time} | ${quote.bundleDiscount}</div>
+  h+=`</div>`;
+  h+=`<div class="form-group"><label>补充描述（可选）</label><textarea id="customPain" placeholder="请补充具体的安全痛点、历史安全事件、已有的安全工具或流程...">${state.customPain||''}</textarea></div>`;
+  h+=`</div>`;
+  h+=`<div style="display:flex;gap:12px;justify-content:center">
+    <button class="btn btn-outline btn-lg" onclick="state.customPain=document.getElementById('customPain')?.value||'';goStep(3)">← 重新选择预算</button>
+    <button class="btn btn-primary btn-lg" onclick="goStep(5)">下一步：查看推荐方案 →</button>
   </div>`;
-
-  h+=`<div class="card"><h2 class="section-title">📅 获取正式报价</h2><p class="section-sub">提交信息后，商务经理将在1个工作日内联系，提供正式报价单和产品演示</p>
-  <div class="contact-form">
-    <div class="form-row config-row"><div class="form-group"><label>公司名称 *</label><input id="fCompany" placeholder="请输入公司全称"></div><div class="form-group"><label>联系人 *</label><input id="fName" placeholder="请输入联系人姓名"></div></div>
-    <div class="form-row config-row"><div class="form-group"><label>手机号 *</label><input id="fPhone" type="tel" placeholder="请输入手机号"></div><div class="form-group"><label>邮箱</label><input id="fEmail" type="email" placeholder="请输入邮箱"></div></div>
-    <div class="form-group"><label>备注</label><textarea id="fNote" placeholder="补充说明项目背景、预算范围等..."></textarea></div>
-    <button class="btn btn-green btn-lg" onclick="submitQuote()" style="width:100%;justify-content:center">📩 提交获取正式报价</button>
-  </div>
-  </div>`;
-
-  h+=`<div style="text-align:center;margin-top:16px"><button class="btn btn-outline" onclick="nextStep(3)">← 调整配置</button></div>`;
   return h;
 }
 
-// ===== Logic =====
-function calcQuote(){
-  const scaleFactors = {small:0.7,medium:1.0,large:1.3,enterprise:1.8};
-  const sf = scaleFactors[state.scale]||1;
-  const df = DEPLOY[state.deploy].factor;
-  const bundleN = state.products.length;
-  const bd = bundleN>=3?0.85:bundleN>=2?0.9:1.0;
-  let items = [];
-  for(const key of state.products){
-    const p = PRODUCTS[key];
-    const min = Math.round(p.price.min*sf*bd*df*100)/100;
-    const max = Math.round(p.price.max*sf*bd*df*100)/100;
-    items.push({...p,icon:p.icon,range:`${min}-${max}`,min,max});
+// ===== Step 5: 结果 =====
+function rStep5(){
+  state.customPain = document.getElementById('customPain')?.value||'';
+
+  // 智能推荐产品
+  const ind = INDUSTRIES[state.industry];
+  const budget = BUDGET_RANGES.find(b=>b.id===state.budget);
+  const maxProducts = budget?budget.maxProducts:1;
+
+  // 基于行业推荐 + 场景匹配加权
+  let scores = {};
+  for(const pid of ind.rec){ scores[pid]=(scores[pid]||0)+3; } // 行业推荐+3
+
+  // 场景加分
+  for(const sid of state.scenes){
+    if(sid==='c1'||sid==='c4'||sid==='c5'){ scores['SAST']=(scores['SAST']||0)+2; scores['FIRMWARE']=(scores['FIRMWARE']||0)+1; }
+    if(sid==='c2'){ scores['SCA']=(scores['SCA']||0)+3; }
+    if(sid==='c3'){ scores['SAST']=(scores['SAST']||0)+2; scores['SCA']=(scores['SCA']||0)+1; }
+    if(sid==='t1'){ scores['SAST']=(scores['SAST']||0)+3; }
+    if(sid==='t2'){ scores['SCA']=(scores['SCA']||0)+3; }
+    if(sid==='t3'){ scores['FIRMWARE']=(scores['FIRMWARE']||0)+3; }
+    if(sid==='t4'){ scores['LLM']=(scores['LLM']||0)+3; }
+    if(sid==='t5'){ scores['AI_SAST']=(scores['AI_SAST']||0)+3; scores['SAST']=(scores['SAST']||0)+1; }
+    if(sid==='t6'){ scores['SAST']=(scores['SAST']||0)+2; scores['SCA']=(scores['SCA']||0)+1; }
+    if(sid==='s1'||sid==='s6'){ scores['SAST']=(scores['SAST']||0)+1; }
+    if(sid==='s2'){ scores['FIRMWARE']=(scores['FIRMWARE']||0)+2; }
+    if(sid==='s3'){ scores['SAST']=(scores['SAST']||0)+1; }
+    if(sid==='s4'){ scores['SAST']=(scores['SAST']||0)+1; scores['SCA']=(scores['SCA']||0)+1; }
+    if(sid==='s5'){ scores['SAST']=(scores['SAST']||0)+1; }
   }
-  return {items, bundleDiscount:bundleN>=3?'3产品组合85折':bundleN>=2?'2产品组合9折':'无',deployFactor:df};
+
+  // 痛点加分
+  const painMap = {p1:'SAST',p2:'SAST',p3:'SCA',p4:'SAST',p5:'SCA',p6:'FIRMWARE',p7:'LLM',p8:'AI_SAST'};
+  for(const pid of state.pains){ const prod=painMap[pid]; if(prod) scores[prod]=(scores[prod]||0)+2; }
+
+  // 排序取top
+  const ranked = Object.entries(scores).sort((a,b)=>b[1]-a[1]);
+  const recommended = ranked.slice(0, maxProducts).map(([k])=>k);
+
+  // 计算报价
+  const productCount = recommended.length;
+  const unitPrice = 50; // 万/年/产品
+  const bundleDiscount = productCount>=3?0.85:productCount>=2?0.9:1.0;
+  const rawTotal = productCount * unitPrice;
+  const discountedTotal = Math.round(rawTotal * bundleDiscount);
+  const budgetFactor = budget?budget.factor:1.0;
+
+  // 推荐产品卡片
+  let h=`<div class="card"><div class="sec-label">STEP 5 · 推荐方案</div><h2 class="sec-title">${ind.icon} ${state.industry}行业 · 推荐方案</h2><p class="sec-sub">基于行业「${state.industry}」、${state.scenes.length}个需求场景、预算「${budget?budget.range:''}」，智能推荐以下产品组合</p>`;
+
+  for(const pid of recommended){
+    const p=PRODUCTS[pid]; if(!p) continue;
+    h+=`<div class="rec-product"><div style="display:flex;justify-content:space-between;align-items:flex-start">
+      <div style="flex:1"><div class="rec-name">${p.icon} ${p.name}</div><div class="rec-brand">${p.brand} · ${p.category}</div>
+      <div style="font-size:13px;color:var(--text);line-height:1.6;margin-bottom:8px">${p.desc}</div>
+      <div class="rec-features">${p.features.map(f=>`<span class="rec-feature">${f}</span>`).join('')}</div></div>
+      <div class="rec-price-box"><div class="rec-price">${unitPrice}万</div><div class="rec-price-label">/年/套</div></div>
+    </div></div>`;
+  }
+
+  // 报价汇总
+  const priceLabel = productCount>=3?'3产品组合85折':productCount>=2?'2产品组合9折':'标准价';
+  h+=`<div class="quote-card">
+    <div class="total-label">💰 参考报价（${priceLabel}）</div>
+    <div class="total">${discountedTotal}万</div>
+    <div class="total-label">/年 · ${productCount}个产品 · 每产品5用户1并发 · 全功能模块</div>
+  </div>`;
+
+  // 说明
+  h+=`<div class="quote-note">
+    <b>📌 报价说明：</b><br>
+    · 每款产品标准价 <b>50万/年</b>（含5用户1并发，全功能模块）<br>
+    · 组合优惠：${priceLabel}<br>
+    · 如含测试服务，服务费根据项目范围另行报价<br>
+    · 以上为参考报价，正式报价需根据具体规模和需求定制<br>
+    ${budgetFactor!==1?`· ⚠️ 推荐方案总价与您的预算「${budget?.range}」${discountedTotal*10000>parseInt(budget?.range||'0')*10000?'有一定差距，建议调整产品组合或预算':'基本匹配'}`:''}
+  </div>`;
+
+  // 场景匹配说明
+  if(state.scenes.length>0 || state.pains.length>0){
+    h+=`<div class="card card-sm"><div style="font-weight:700;color:var(--text-darker);margin-bottom:10px">📋 需求匹配说明</div><div style="font-size:13px;color:var(--text);line-height:1.8">`;
+    const sceneNames = [...SCENARIOS.compliance,...SCENARIOS.tool,...SCENARIOS.service];
+    h+=`<b>已选场景：</b>${state.scenes.map(sid=>{const s=sceneNames.find(x=>x.id===sid);return s?s.title:sid}).join('、')}<br>`;
+    if(state.pains.length>0) h+=`<b>痛点关注：</b>${state.pains.map(pid=>{const p=document.querySelector(`.pain-card[onclick*="${pid}"]`);return p?p.querySelector('.pain-title').textContent:pid}).join('、')}<br>`;
+    h+=`<b>推荐逻辑：</b>基于行业匹配度(权重3)+场景需求匹配(权重2-3)+痛点匹配(权重2)，综合评分后推荐Top ${maxProducts}产品。</div></div>`;
+  }
+
+  h+=`</div>`;
+
+  // 联系表单
+  h+=`<div class="card"><h2 class="sec-title">📅 获取正式报价</h2><p class="sec-sub">提交后商务经理将在1个工作日内联系，提供详细报价和产品演示</p>
+  <div class="form-row"><div class="form-group"><label>公司名称 *</label><input id="fCompany" placeholder="请输入公司全称"></div><div class="form-group"><label>联系人 *</label><input id="fName" placeholder="请输入联系人姓名"></div></div>
+  <div class="form-row"><div class="form-group"><label>手机号 *</label><input id="fPhone" type="tel" placeholder="请输入手机号"></div><div class="form-group"><label>邮箱</label><input id="fEmail" type="email" placeholder="请输入邮箱"></div></div>
+  <div class="form-group"><label>补充说明</label><textarea id="fNote" placeholder="项目背景、特殊需求、时间要求...">${state.customPain||''}</textarea></div>
+  <button class="btn btn-green btn-lg" onclick="submitQuote()" style="width:100%;justify-content:center">📩 提交获取正式报价方案</button>
+  </div>`;
+
+  h+=`<div style="display:flex;gap:12px;justify-content:center;margin-top:16px">
+    <button class="btn btn-outline" onclick="goStep(4)">← 调整痛点</button>
+    <button class="btn btn-outline" onclick="resetAll()">🔄 重新选型</button>
+  </div>`;
+  return h;
 }
 
-function selectIndustry(key){ state.industry=key; state.products=[]; render(); }
-function toggleProduct(key){
-  const idx=state.products.indexOf(key);
-  if(idx>=0) state.products.splice(idx,1); else state.products.push(key);
+// ===== Actions =====
+function goStep(n){
+  if(n===5) state.step=5;
+  else if(n===4){ state.step=4; }
+  else state.step=n;
+  state.products=[]; render(); window.scrollTo(0,0);
+}
+function toggleScene(id){
+  const idx=state.scenes.indexOf(id);
+  if(idx>=0) state.scenes.splice(idx,1); else state.scenes.push(id);
   render();
 }
-function switchTab(name){
-  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
-  document.querySelectorAll('.tab-content').forEach(t=>t.classList.remove('active'));
-  event.target.classList.add('active');
-  document.getElementById('tab-'+name).classList.add('active');
+function togglePain(id){
+  const idx=state.pains.indexOf(id);
+  if(idx>=0) state.pains.splice(idx,1); else state.pains.push(id);
+  render();
 }
-function nextStep(n){ state.step=n; render(); window.scrollTo(0,0); }
-function resetAll(){ state={step:1,industry:null,products:[],deploy:'local',scale:'medium'}; render(); }
+function resetAll(){ state={step:1,industry:null,scenes:[],budget:null,pains:[],customPain:'',products:[],deploy:'local'}; render(); }
 
 function toast(msg,t){let d=document.createElement('div');d.className='toast '+(t||'success');d.textContent=msg;document.body.appendChild(d);setTimeout(()=>d.remove(),3000);}
 
@@ -408,20 +493,13 @@ function submitQuote(){
   const n=document.getElementById('fName')?.value.trim();
   const p=document.getElementById('fPhone')?.value.trim();
   if(!c||!n||!p){toast('请填写公司名称、联系人和手机号','error');return}
-  const quote=calcQuote();
-  const total=quote.items.reduce((s,i)=>s+i.min,0);
-  const totalMax=quote.items.reduce((s,i)=>s+i.max,0);
-  const data={company:c,name:n,phone:p,email:document.getElementById('fEmail')?.value.trim()||'',note:document.getElementById('fNote')?.value.trim()||'',industry:state.industry,products:state.products,deploy:state.deploy,scale:state.scale,quote:`${Math.round(total)}-${Math.round(totalMax)}万/年`,time:new Date().toLocaleString('zh-CN')};
-  // Save to localStorage for demo
-  const leads = JSON.parse(localStorage.getItem('ruanan_leads')||'[]');
-  leads.push(data);
-  localStorage.setItem('ruanan_leads',JSON.stringify(leads));
-  console.log('报价提交:',data);
-  toast('✅ 报价方案已提交！商务经理将在1个工作日内联系');
+  const data={company:c,name:n,phone:p,email:document.getElementById('fEmail')?.value.trim()||'',note:document.getElementById('fNote')?.value.trim()||'',industry:state.industry,scenes:state.scenes,budget:state.budget,pains:state.pains,customPain:state.customPain,deploy:state.deploy,time:new Date().toLocaleString('zh-CN')};
+  const leads=JSON.parse(localStorage.getItem('ruanan_leads')||'[]');leads.push(data);localStorage.setItem('ruanan_leads',JSON.stringify(leads));
+  console.log('选型提交:',data);
+  toast('✅ 方案已提交！商务经理将在1个工作日内联系您');
   setTimeout(()=>resetAll(),2000);
 }
 
-// Init
 render();
 </script>
 </body>
