@@ -265,7 +265,7 @@ function updateUI(){
 function rStep1(){
   let h=`<div class="card"><div class="sec-label">STEP 1 · 选择行业</div><h2 class="sec-title">选择客户所属行业</h2><p class="sec-sub">系统将根据行业自动匹配对应的法规要求和产品推荐策略</p><div class="grid3">`;
   for(const [key,ind] of Object.entries(INDUSTRIES)){
-    h+=`<div class="ind-card${state.industry===key?' selected':''}" onclick="state.industry=key;state.scenes=[];state.products=[];state.budget=null;state.pains=[];render()">
+    h+=`<div class="ind-card${state.industry===key?' selected':''}" onclick="selectIndustry('${key.replace(/'/g, "\\'")}')">
       <div class="ind-icon">${ind.icon}</div>
       <div class="ind-name">${key}</div>
       <div class="ind-reg">${ind.reg}</div>
@@ -319,7 +319,7 @@ function rStep2(){
 function rStep3(){
   let h=`<div class="card"><div class="sec-label">STEP 3 · 预算范围</div><h2 class="sec-title">选择年度预算范围</h2><p class="sec-sub">系统将根据预算推荐最合适的产品组合方案</p><div class="budget-grid">`;
   for(const b of BUDGET_RANGES){
-    h+=`<div class="budget-card${state.budget===b.id?' selected':''}" onclick="state.budget=b.id;render()">
+    h+=`<div class="budget-card${state.budget===b.id?' selected':''}" onclick="selectBudget('${b.id}')">
       <div class="budget-range">${b.range}</div>
       <div class="budget-label">年度预算</div>
       <div class="budget-desc">${b.desc}</div>
@@ -497,6 +497,8 @@ function rStep5(){
 }
 
 // ===== Actions =====
+function selectIndustry(key){ state.industry=key; state.scenes=[]; state.products=[]; state.budget=null; state.pains=[]; state.customPain=''; render(); }
+function selectBudget(bid){ state.budget=bid; render(); }
 function goStep(n){
   if(n===5) state.step=5;
   else if(n===4){ state.step=4; }
