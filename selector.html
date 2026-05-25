@@ -484,20 +484,22 @@ function rStep5(){
 
   h+=`</div>`;
 
-  // 联系表单
-  h+=`<div class="card"><h2 class="sec-title">📅 获取正式报价</h2><p class="sec-sub">提交后商务经理将在1个工作日内联系，提供详细报价和产品演示</p>
-  <div class="form-row"><div class="form-group"><label>公司名称 *</label><input id="fCompany" placeholder="请输入公司全称"></div><div class="form-group"><label>联系人 *</label><input id="fName" placeholder="请输入联系人姓名"></div></div>
-  <div class="form-row"><div class="form-group"><label>手机号 *</label><input id="fPhone" type="tel" placeholder="请输入手机号"></div><div class="form-group"><label>邮箱</label><input id="fEmail" type="email" placeholder="请输入邮箱"></div></div>
-  <div class="form-group"><label>补充说明</label><textarea id="fNote" placeholder="项目背景、源码包大小、特殊需求...">${state.customPain||''}</textarea></div>
-  <button class="btn btn-green btn-lg" data-action="submitQuote" style="width:100%;justify-content:center">📩 提交获取正式报价方案</button>
-  <div style="margin-top:16px;padding:16px;background:var(--bg-card);border-radius:12px;text-align:center;font-size:13px;color:var(--text-dark);line-height:1.8">
-    📞 如需加急或超出标准范围，可直接联系<br>
-    <b>电话：13692220639</b> &nbsp;|&nbsp; <b>邮箱：changle@softsec-tech.cn</b>
-  </div>
-  </div>`;
+  // 行动选项
+  const optCardStyle = 'border:2px solid var(--border);border-radius:14px;padding:20px 24px;cursor:pointer;transition:all 0.25s;background:#fff;text-align:center;flex:1;min-width:200px';
+  const optHover = 'onmouseover="this.style.borderColor=this.dataset.color;this.style.background=this.dataset.bg" onmouseout="this.style.borderColor=this.dataset.defaultBorder;this.style.background=this.dataset.defaultBg"';
+  h+=`<div class="card"><h2 class="sec-title">📋 下一步选择</h2><p class="sec-sub">根据推荐方案，选择你需要的后续服务</p>`;
+  h+=`<div style="display:grid;grid-template-columns:repeat(4,1fr);gap:12px">`;
+  h+=`<div ${optHover} data-color="var(--blue)" data-bg="var(--blue-light)" data-default-border="var(--border)" data-default-bg="#fff" style="${optCardStyle}" data-action="selectOption" data-param="quote"><div style="font-size:32px;margin-bottom:8px">📋</div><div style="font-weight:700;color:var(--text-darker);margin-bottom:4px">生成报价与方案</div><div style="font-size:12px;color:var(--text)">生成正式报价单<br>和解决方案文档</div></div>`;
+  h+=`<div ${optHover} data-color="var(--green)" data-bg="var(--green-light)" data-default-border="var(--border)" data-default-bg="#fff" style="${optCardStyle}" data-action="selectOption" data-param="contact"><div style="font-size:32px;margin-bottom:8px">📞</div><div style="font-weight:700;color:var(--text-darker);margin-bottom:4px">联系销售</div><div style="font-size:12px;color:var(--text)">直接与我们的<br>商务经理对接</div></div>`;
+  h+=`<div ${optHover} data-color="var(--purple)" data-bg="#F8F4FC" data-default-border="var(--border)" data-default-bg="#fff" style="${optCardStyle}" data-action="selectOption" data-param="communicate"><div style="font-size:32px;margin-bottom:8px">💬</div><div style="font-weight:700;color:var(--text-darker);margin-bottom:4px">进一步交流</div><div style="font-size:12px;color:var(--text)">留下需求和联系<br>方式，深入沟通</div></div>`;
+  h+=`<div ${optHover} data-color="var(--teal)" data-bg="#E8F6F7" data-default-border="var(--border)" data-default-bg="#fff" style="${optCardStyle}" data-action="selectOption" data-param="poc"><div style="font-size:32px;margin-bottom:8px">🔬</div><div style="font-weight:700;color:var(--text-darker);margin-bottom:4px">申请POC测试</div><div style="font-size:12px;color:var(--text)">申请产品试用<br>概念验证测试</div></div>`;
+  h+=`</div></div>`;
+
+  // 表单区 - 默认隐藏，选择后展开
+  h+=`<div id="optionForm" style="display:none"><div class="card" id="optionFormContent"></div></div>`;
 
   h+=`<div style="display:flex;gap:12px;justify-content:center;margin-top:16px">
-    <button class="btn btn-outline" data-action="goStep" data-param="">← 调整痛点</button>
+    <button class="btn btn-outline" data-action="goStep" data-param="4">← 调整痛点</button>
     <button class="btn btn-outline" data-action="resetAll">🔄 重新选型</button>
   </div>`;
   return h;
@@ -506,6 +508,77 @@ function rStep5(){
 // ===== Actions =====
 function selectIndustry(key){ state.industry=key; state.scenes=[]; state.products=[]; state.budget=null; state.pains=[]; state.customPain=''; render(); }
 function selectBudget(bid){ state.budget=bid; render(); }
+function selectOption(opt){
+  const formEl = document.getElementById('optionForm');
+  const contentEl = document.getElementById('optionFormContent');
+  const ind = INDUSTRIES[state.industry];
+  const sceneNames = [...SCENARIOS.compliance,...SCENARIOS.tool,...SCENARIOS.service];
+  const sceneList = state.scenes.map(sid=>{const s=sceneNames.find(x=>x.id===sid);return s?s.title:sid}).join('、');
+
+  let title='', body='', btnText='', btnAction='';
+
+  if(opt==='quote'){
+    title='📋 生成报价与解决方案';
+    btnText='📩 生成正式报价方案';
+    btnAction='submitAction';
+    body=`<p class="sec-sub">我们将根据以下需求生成正式报价单和解决方案文档，请确认并补充联系方式</p>
+    <div class="quote-note"><b>需求摘要：</b><br>· 行业：${ind.icon} ${state.industry}<br>· 需求场景：${sceneList}<br>· 预算：${BUDGET_RANGES.find(b=>b.id===state.budget)?.range||'未选'}<br>· 痛点：${state.pains.join('、')||'未选'}</div>
+    <div class="form-row"><div class="form-group"><label>公司名称 *</label><input id="optCompany" placeholder="请输入公司全称"></div><div class="form-group"><label>联系人 *</label><input id="optName" placeholder="请输入联系人姓名"></div></div>
+    <div class="form-row"><div class="form-group"><label>手机号 *</label><input id="optPhone" type="tel" placeholder="请输入手机号"></div><div class="form-group"><label>邮箱</label><input id="optEmail" type="email" placeholder="请输入邮箱"></div></div>
+    <div class="form-group"><label>补充说明</label><textarea id="optNote" placeholder="项目背景、特殊需求、时间要求...">${state.customPain||''}</textarea></div>`;
+  }else if(opt==='contact'){
+    title='📞 联系销售';
+    btnText='📞 提交联系请求';
+    btnAction='submitAction';
+    body=`<p class="sec-sub">我们的商务经理将尽快与您联系，请留下联系方式</p>
+    <div class="form-row"><div class="form-group"><label>公司名称 *</label><input id="optCompany" placeholder="请输入公司全称"></div><div class="form-group"><label>联系人 *</label><input id="optName" placeholder="请输入联系人姓名"></div></div>
+    <div class="form-row"><div class="form-group"><label>手机号 *</label><input id="optPhone" type="tel" placeholder="请输入手机号"></div><div class="form-group"><label>邮箱</label><input id="optEmail" type="email" placeholder="请输入邮箱"></div></div>
+    <div class="form-group"><label>感兴趣的产品/服务</label><textarea id="optNote" placeholder="请简述你关注的产品或服务...">${sceneList}</textarea></div>`;
+  }else if(opt==='communicate'){
+    title='💬 进一步交流';
+    btnText='💬 提交需求信息';
+    btnAction='submitAction';
+    body=`<p class="sec-sub">请留下详细需求和联系方式，我们将安排资深技术专家与您深入沟通</p>
+    <div class="form-row"><div class="form-group"><label>公司名称 *</label><input id="optCompany" placeholder="请输入公司全称"></div><div class="form-group"><label>联系人 *</label><input id="optName" placeholder="请输入联系人姓名"></div></div>
+    <div class="form-row"><div class="form-group"><label>手机号 *</label><input id="optPhone" type="tel" placeholder="请输入手机号"></div><div class="form-group"><label>邮箱</label><input id="optEmail" type="email" placeholder="请输入邮箱"></div></div>
+    <div class="form-group"><label>期望交流的内容 *</label><textarea id="optNote" placeholder="请描述你希望了解的技术细节、关注的场景、现有的安全体系..."></textarea></div>
+    <div class="form-group"><label>方便沟通的时间</label><select id="optTime"><option value="">请选择</option><option>工作日 9:00-12:00</option><option>工作日 14:00-18:00</option><option>随时均可</option></select></div>`;
+  }else if(opt==='poc'){
+    title='🔬 申请POC测试';
+    btnText='🔬 提交POC申请';
+    btnAction='submitAction';
+    body=`<p class="sec-sub">申请产品试用和概念验证测试，我们将根据您的需求安排POC环境</p>
+    <div class="form-row"><div class="form-group"><label>公司名称 *</label><input id="optCompany" placeholder="请输入公司全称"></div><div class="form-group"><label>联系人 *</label><input id="optName" placeholder="请输入联系人姓名"></div></div>
+    <div class="form-row"><div class="form-group"><label>手机号 *</label><input id="optPhone" type="tel" placeholder="请输入手机号"></div><div class="form-group"><label>邮箱</label><input id="optEmail" type="email" placeholder="请输入邮箱"></div></div>
+    <div class="form-row"><div class="form-group"><label>期望测试产品</label><select id="optProduct" multiple style="min-height:100px"><option>SAST 静态代码分析</option><option>SCA 软件成分分析</option><option>固件安全测试</option><option>大模型安全测试</option><option>AI SAST 智能代码分析</option></select></div><div class="form-group"><label>部署方式</label><select id="optDeploy"><option value="">请选择</option><option>本地部署</option><option>私有云</option><option>涉密离线环境</option><option>SaaS试用</option></select></div></div>
+    <div class="form-group"><label>测试场景说明</label><textarea id="optNote" placeholder="请描述期望测试的代码类型、语言、规模等..."></textarea></div>
+    <div class="form-group"><label>期望测试时间</label><input id="optTestDate" type="date"></div>`;
+  }
+
+  contentEl.innerHTML = `<h2 class="sec-title">${title}</h2>${body}
+    <button class="btn btn-green btn-lg" data-action="${btnAction}" data-param="${opt}" style="width:100%;justify-content:center;margin-top:8px">${btnText}</button>`;
+  formEl.style.display = 'block';
+  formEl.scrollIntoView({behavior:'smooth'});
+}
+function submitActionForm(opt){
+  const c = document.getElementById('optCompany')?.value.trim();
+  const n = document.getElementById('optName')?.value.trim();
+  const p = document.getElementById('optPhone')?.value.trim();
+  if(!c||!n||!p){ toast('请填写公司名称、联系人和手机号','error'); return; }
+  const data = {
+    type: opt, company:c, name:n, phone:p,
+    email: document.getElementById('optEmail')?.value||'',
+    note: document.getElementById('optNote')?.value||'',
+    industry: state.industry, scenes: state.scenes, budget: state.budget, pains: state.pains,
+    time: new Date().toLocaleString('zh-CN')
+  };
+  const leads=JSON.parse(localStorage.getItem('ruanan_leads')||'[]'); leads.push(data);
+  localStorage.setItem('ruanan_leads',JSON.stringify(leads));
+  const labels = {quote:'报价方案',contact:'销售联系',communicate:'需求交流',poc:'POC申请'};
+  toast('✅ '+labels[opt]+'请求已提交！我们将尽快联系您');
+  console.log('提交:', data);
+  setTimeout(()=>resetAll(),2000);
+}
 function goStep(n){
   if(n===5) state.step=5;
   else if(n===4){ state.step=4; }
@@ -543,6 +616,8 @@ document.addEventListener('click', function(e){
   }
   else if (action === 'resetAll') resetAll();
   else if (action === 'submitQuote') submitQuote();
+  else if (action === 'selectOption') selectOption(param);
+  else if (action === 'submitAction') submitActionForm(param);
 });
 
 function submitQuote(){
