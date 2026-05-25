@@ -153,7 +153,7 @@ body{background:linear-gradient(135deg,#f0f4f8 0%,#e8edf2 100%);min-height:100vh
 <div class="container">
   <div class="progress-bar"><div class="progress-fill" id="progressBar" style="width:20%"></div></div>
   <div class="steps-bar">
-    <div class="step-item"><div class="step-num" id="stepNum1">1</div>选择行业</div>
+    <div class="step-item"><div class="step-num" id="stepNum0">0</div>信息登记</div><span class="step-arrow" id="stepArr0">›</span><div class="step-item"><div class="step-num" id="stepNum1">1</div>选择行业</div>
     <span class="step-arrow" id="stepArr1">›</span>
     <div class="step-item"><div class="step-num" id="stepNum2">2</div>需求场景</div>
     <span class="step-arrow" id="stepArr2">›</span>
@@ -243,14 +243,15 @@ const BUDGET_RANGES = [
 ];
 
 // ===== State =====
-let state = {step:1,industry:null,scenes:[],budget:null,pains:[],customPain:'',products:[],deploy:'local'};
+let state = {step:0,userInfo:{company:'',address:'',contact:'',title:'',email:'',phone:''},industry:null,scenes:[],budget:null,pains:[],customPain:'',products:[],deploy:'local'};
 
 // ===== Render Engine =====
 function render(){
   const app = document.getElementById('mainContent');
   const {step} = state;
   updateUI();
-  if(step===1) app.innerHTML = rStep1();
+  if(step===0) app.innerHTML = rStep0();
+  else if(step===1) app.innerHTML = rStep1();
   else if(step===2) app.innerHTML = rStep2();
   else if(step===3) app.innerHTML = rStep3();
   else if(step===4) app.innerHTML = rStep4();
@@ -259,13 +260,25 @@ function render(){
 
 function updateUI(){
   // progress
-  document.getElementById('progressBar').style.width = (state.step*20)+'%';
+  document.getElementById('progressBar').style.width = (state.step*16.7)+'%';
   // step nums
-  for(let i=1;i<=5;i++){
-    const el=document.getElementById('stepNum'+i);
+  for(let i=0;i<=5;i++){
+    const el=document.getElementById('stepNum'+i); if(!el) continue;
     el.className='step-num'+(i===state.step?' active':i<state.step?' done':'');
-    if(i<5) document.getElementById('stepArr'+i).className='step-arrow'+(i<state.step?' done':'');
+    if(i<5){ const arr=document.getElementById('stepArr'+i); if(arr) arr.className='step-arrow'+(i<state.step?' done':''); };
   }
+}
+
+// ===== Step 0: 信息登记 =====
+function rStep0(){
+  const u = state.userInfo;
+  let html='<div class="card"><div class="sec-label">STEP 0 · 信息登记</div><h2 class="sec-title">欢迎使用软安科技智能选型</h2><p class="sec-sub">请先登记您的信息，以便我们生成个性化方案和报价</p>';
+  html+='<div class="form-row"><div class="form-group"><label>企业名称 *</label><input id="uCompany" value="'+(u.company||'')+'" placeholder="请输入企业全称"></div><div class="form-group"><label>企业地址</label><input id="uAddress" value="'+(u.address||'')+'" placeholder="省/市/区"></div></div>';
+  html+='<div class="form-row"><div class="form-group"><label>联系人 *</label><input id="uContact" value="'+(u.contact||'')+'" placeholder="请输入联系人姓名"></div><div class="form-group"><label>职位 *</label><input id="uTitle" value="'+(u.title||'')+'" placeholder="如：信息安全总监"></div></div>';
+  html+='<div class="form-row"><div class="form-group"><label>邮箱 *</label><input id="uEmail" type="email" value="'+(u.email||'')+'" placeholder="请输入邮箱"></div><div class="form-group"><label>电话 *</label><input id="uPhone" type="tel" value="'+(u.phone||'')+'" placeholder="请输入手机号"></div></div>';
+  html+='</div>';
+  html+='<div style="text-align:center;margin-top:16px"><button class="btn btn-primary btn-lg" data-action="saveUserInfo">下一步：选择行业 →</button></div>';
+  return html;
 }
 
 // ===== Step 1: 行业 =====
@@ -315,32 +328,28 @@ function rStep2(){
 
   h+=`</div>`;
   h+=`<div style="display:flex;gap:12px;justify-content:center">
-    <button class="btn btn-outline btn-lg" data-action="goStep" data-param="">← 重新选择行业</button>
-    <button class="btn btn-primary btn-lg" data-action="goStep" data-param="" ${state.scenes.length===0?'disabled':''}>下一步：选择预算范围 →</button>
+    <button class="btn btn-outline btn-lg" data-action="goStep" data-param="1">← 重新选择行业</button>
+    <button class="btn btn-primary btn-lg" data-action="goStep" data-param="3" ${state.scenes.length===0?'disabled':''}>下一步：填写项目信息 →</button>
   </div>`;
   if(state.scenes.length===0) h+=`<p style="text-align:center;color:var(--red);font-size:13px;margin-top:8px">⚠️ 请至少选择一个需求场景</p>`;
   return h;
 }
 
-// ===== Step 3: 预算 =====
+// ===== Step 3: 项目信息 =====
 function rStep3(){
-  let h=`<div class="card"><div class="sec-label">STEP 3 · 预算范围</div><h2 class="sec-title">选择年度预算范围</h2><p class="sec-sub">系统将根据预算推荐最合适的产品组合方案</p><div class="budget-grid">`;
-  for(const b of BUDGET_RANGES){
-    h+=`<div class="budget-card${state.budget===b.id?' selected':''}" data-action="selectBudget" data-param="${b.id}">
-      <div class="budget-range">${b.range}</div>
-      <div class="budget-label">年度预算</div>
-      <div class="budget-desc">${b.desc}</div>
-    </div>`;
-  }
-  h+=`</div></div>`;
-  h+=`<div style="display:flex;gap:12px;justify-content:center">
-    <button class="btn btn-outline btn-lg" data-action="goStep" data-param="">← 重新选择场景</button>
-    <button class="btn btn-primary btn-lg" data-action="goStep" data-param="" ${!state.budget?'disabled':''}>下一步：描述安全痛点 →</button>
-  </div>`;
-  return h;
+  const info = state.projectInfo || {};
+  let html='<div class="card"><div class="sec-label">STEP 3 · 项目信息</div><h2 class="sec-title">填写项目关键信息</h2><p class="sec-sub">以下信息将帮助我们为您精准匹配产品和报价方案</p>';
+  html+='<div class="form-row"><div class="form-group"><label>整体预算（万元/年）*</label><input id="pBudget" type="number" value="'+(info.budget||'')+'" placeholder="如：80" min="0"></div><div class="form-group"><label>企业研发人数与安全人数规模 *</label><input id="pTeamSize" value="'+(info.teamSize||'')+'" placeholder="如：研发200人，安全5人"></div></div>';
+  html+='<div class="form-row"><div class="form-group"><label>主要开发语言 *</label><input id="pLanguages" value="'+(info.languages||'')+'" placeholder="如：C/C++, Java, Python, JavaScript"></div><div class="form-group"><label>预计采购时间点 *</label><input id="pTimeline" value="'+(info.timeline||'')+'" placeholder="如：2025Q3、3个月内、正在招标"></div></div>';
+  html+='</div>';
+  html+='<div style="display:flex;gap:12px;justify-content:center">';
+  html+='<button class="btn btn-outline btn-lg" data-action="goStep" data-param="2">← 重新选择场景</button>';
+  html+='<button class="btn btn-primary btn-lg" data-action="saveProjectInfo">下一步：描述安全痛点 →</button>';
+  html+='</div>';
+  return html;
 }
 
-// ===== Step 4: 痛点 =====
+// ===== Step 4: 痛点 =====// ===== Step 4: 痛点 =====
 function rStep4(){
   const ind = INDUSTRIES[state.industry];
   const painOptions = [
@@ -367,7 +376,7 @@ function rStep4(){
   h+=`</div>`;
   h+=`<div style="display:flex;gap:12px;justify-content:center">
     <button class="btn btn-outline btn-lg" data-action="goStep" data-param="3" data-savepain="true">← 重新选择预算</button>
-    <button class="btn btn-primary btn-lg" data-action="goStep" data-param="">下一步：查看推荐方案 →</button>
+    <button class="btn btn-primary btn-lg" data-action="goStep" data-param="5">下一步：查看推荐方案 →</button>
   </div>`;
   return h;
 }
@@ -506,7 +515,9 @@ function rStep5(){
 }
 
 // ===== Actions =====
-function selectIndustry(key){ state.industry=key; state.scenes=[]; state.products=[]; state.budget=null; state.pains=[]; state.customPain=''; render(); }
+function saveUserInfo(){ var u=state.userInfo; u.company=document.getElementById('uCompany')?.value.trim()||''; u.address=document.getElementById('uAddress')?.value.trim()||''; u.contact=document.getElementById('uContact')?.value.trim()||''; u.title=document.getElementById('uTitle')?.value.trim()||''; u.email=document.getElementById('uEmail')?.value.trim()||''; u.phone=document.getElementById('uPhone')?.value.trim()||''; if(!u.company||!u.contact||!u.title||!u.email||!u.phone){ toast('请填写所有必填项','error'); return; } state.step=1; render(); window.scrollTo(0,0); }
+function selectIndustry(key){ state.industry=key; state.scenes=[]; state.products=[]; state.budget=null; state.pains=[]; state.customPain=""; render(); }
+function saveProjectInfo(){ var info=state.projectInfo||{}; info.budget=document.getElementById('pBudget')?.value.trim()||''; info.teamSize=document.getElementById('pTeamSize')?.value.trim()||''; info.languages=document.getElementById('pLanguages')?.value.trim()||''; info.timeline=document.getElementById('pTimeline')?.value.trim()||''; if(!info.budget||!info.teamSize||!info.languages||!info.timeline){ toast('请填写所有必填项','error'); return; } state.projectInfo=info; state.step=4; render(); window.scrollTo(0,0); }
 function selectBudget(bid){ state.budget=bid; render(); }
 function selectOption(opt){
   const formEl = document.getElementById('optionForm');
@@ -595,7 +606,7 @@ function togglePain(id){
   if(idx>=0) state.pains.splice(idx,1); else state.pains.push(id);
   render();
 }
-function resetAll(){ state={step:1,industry:null,scenes:[],budget:null,pains:[],customPain:'',products:[],deploy:'local'}; render(); }
+function resetAll(){ state={step:0,userInfo:{company:'',address:'',contact:'',title:'',email:'',phone:''},industry:null,scenes:[],budget:null,pains:[],customPain:'',products:[],deploy:'local'}; render(); }
 
 function toast(msg,t){let d=document.createElement('div');d.className='toast '+(t||'success');d.textContent=msg;document.body.appendChild(d);setTimeout(()=>d.remove(),3000);}
 
@@ -606,7 +617,9 @@ document.addEventListener('click', function(e){
   const action = el.getAttribute('data-action');
   const param = el.getAttribute('data-param');
   const savePain = el.getAttribute('data-savepain');
-  if (action === 'selectIndustry') selectIndustry(param);
+  if (action === 'saveUserInfo') saveUserInfo();
+  else if (action === 'saveProjectInfo') saveProjectInfo();
+  else if (action === 'selectIndustry') selectIndustry(param);
   else if (action === 'selectBudget') selectBudget(param);
   else if (action === 'toggleScene') toggleScene(param);
   else if (action === 'togglePain') togglePain(param);
