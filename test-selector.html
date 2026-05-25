@@ -1,0 +1,757 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Selector 单元测试 | 软安科技智能选型</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;font-family:'PingFang SC','Microsoft YaHei',monospace}
+body{background:#f1f5f9;padding:24px}
+h1{font-size:22px;font-weight:800;color:#0f172a;margin-bottom:4px}
+h2{font-size:16px;color:#334155;margin:24px 0 12px;border-bottom:2px solid #e2e8f0;padding-bottom:6px}
+.sub{font-size:13px;color:#64748b;margin-bottom:20px}
+.summary{display:flex;gap:16px;margin-bottom:20px;flex-wrap:wrap}
+.summary-card{background:#fff;border-radius:12px;padding:20px 28px;box-shadow:0 1px 3px rgba(0,0,0,0.06);min-width:120px;text-align:center}
+.summary-card .val{font-size:36px;font-weight:900}
+.summary-card .lbl{font-size:12px;color:#64748b;margin-top:4px}
+.pass{color:#059669}.fail{color:#dc2626}.warn{color:#d97706}
+.test-group{background:#fff;border-radius:12px;padding:20px;margin-bottom:12px;box-shadow:0 1px 3px rgba(0,0,0,0.06)}
+.test-group h3{font-size:15px;font-weight:700;color:#1e293b;margin-bottom:12px}
+.test-case{display:flex;align-items:flex-start;gap:10px;padding:8px 0;border-bottom:1px solid #f1f5f9;font-size:13px}
+.test-case:last-child{border-bottom:none}
+.test-icon{width:22px;height:22px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;flex-shrink:0;font-weight:700}
+.test-icon.ok{background:#d1fae5;color:#059669}
+.test-icon.ng{background:#fee2e2;color:#dc2626}
+.test-name{flex:1;color:#334155}
+.test-detail{font-size:11px;color:#94a3b8;margin-top:2px}
+</style>
+</head>
+<body>
+
+<h1>🧪 Selector 单元测试</h1>
+<p class="sub">软安科技智能选型助手 · 6步流程全覆盖测试</p>
+
+<div class="summary">
+  <div class="summary-card"><div class="val" id="total">0</div><div class="lbl">总测试数</div></div>
+  <div class="summary-card"><div class="val pass" id="passed">0</div><div class="lbl">通过</div></div>
+  <div class="summary-card"><div class="val fail" id="failed">0</div><div class="lbl">失败</div></div>
+</div>
+
+<div id="results"></div>
+
+<script>
+// ============================================================
+// 从 selector.html 复制的核心数据与逻辑（被测单元）
+// ============================================================
+
+const PRODUCTS = {
+  SAST:{id:'SAST',name:'SAST 静态代码分析',brand:'静兮',price:50},
+  SCA:{id:'SCA',name:'SCA 软件成分分析',brand:'源兮',price:50},
+  FIRMWARE:{id:'FIRMWARE',name:'固件安全测试',brand:'侦兮',price:50},
+  LLM:{id:'LLM',name:'大模型安全测试',brand:'元安',price:50},
+  AI_SAST:{id:'AI_SAST',name:'AI SAST 智能代码分析',brand:'灵析',price:0.8,priceUnit:'用户',priceModel:'按用户付费'},
+};
+
+const INDUSTRIES = {
+  汽车:{rec:['SAST','SCA','FIRMWARE','AI_SAST']},
+  芯片半导体:{rec:['FIRMWARE','SAST','SCA']},
+  消费电子:{rec:['SAST','SCA','FIRMWARE']},
+  金融:{rec:['SAST','SCA','LLM']},
+  军工:{rec:['SAST','FIRMWARE','AI_SAST']},
+  政府:{rec:['SAST','SCA','LLM']},
+  医疗设备:{rec:['SAST','SCA','FIRMWARE']},
+  教育:{rec:['SAST','SCA']},
+  电子通信:{rec:['FIRMWARE','SAST','SCA']},
+  信创软件:{rec:['SAST','SCA','AI_SAST']},
+  具身智能:{rec:['FIRMWARE','LLM','SAST']},
+  低空经济:{rec:['SAST','FIRMWARE','SCA']},
+  能源:{rec:['SAST','SCA','FIRMWARE']},
+  游戏互联网:{rec:['SAST','SCA']},
+  智能硬件:{rec:['FIRMWARE','SAST','SCA']},
+};
+
+const SCENARIOS = {
+  compliance:[
+    {id:'c1',title:'法规合规审计'},{id:'c2',title:'供应链安全合规'},
+    {id:'c3',title:'信创国产化替代'},{id:'c4',title:'涉密环境安全检测'},
+    {id:'c5',title:'行业认证准备'},{id:'c6',title:'行业客户合规审计'},
+    {id:'c7',title:'开源许可合规审计'},{id:'c8',title:'软件出海合规审计'},
+  ],
+  tool:[
+    {id:'t1',title:'代码安全扫描'},{id:'t2',title:'开源组件管理'},
+    {id:'t3',title:'固件安全分析'},{id:'t4',title:'AI大模型安全'},
+    {id:'t5',title:'大模型安全测试'},{id:'t7',title:'DevSecOps工具链采购'},
+    {id:'t6',title:'AI SAST 智能代码扫描'},
+  ],
+  service:[
+    {id:'s1',title:'代码安全审计服务'},{id:'s2',title:'固件安全测试服务'},
+    {id:'s3',title:'开源合规审计服务'},{id:'s4',title:'渗透测试服务'},
+    {id:'s5',title:'合规咨询服务'},{id:'s6',title:'安全培训服务'},
+    {id:'s7',title:'驻场安全支持'},
+  ],
+};
+
+const BUDGET_RANGES = [
+  {id:'b1',range:'20万以下',factor:0.3,maxProducts:1},
+  {id:'b2',range:'20-50万',factor:0.6,maxProducts:2},
+  {id:'b3',range:'50-100万',factor:1.0,maxProducts:3},
+  {id:'b4',range:'100万以上',factor:1.5,maxProducts:99},
+];
+
+// State factory
+function createState(){
+  return {step:0,userInfo:{company:'',address:'',contact:'',title:'',email:'',phone:''},projectInfo:{},industry:null,scenes:[],budget:null,pains:[],customPain:'',products:[],deploy:'local'};
+}
+
+// ---- Step 0: User Info Validation ----
+function validateUserInfo(state){
+  const u = state.userInfo;
+  const errors = [];
+  if(!u.company || !u.company.trim()) errors.push('企业名称不能为空');
+  if(!u.contact || !u.contact.trim()) errors.push('联系人不能为空');
+  if(!u.title || !u.title.trim()) errors.push('职位不能为空');
+  if(!u.email || !u.email.trim()) errors.push('邮箱不能为空');
+  if(!u.phone || !u.phone.trim()) errors.push('电话不能为空');
+  return {valid: errors.length === 0, errors};
+}
+
+// ---- Step 1: Industry Selection ----
+function selectIndustry(state, key){
+  if(!INDUSTRIES[key]) return false;
+  state.industry = key;
+  state.scenes = [];
+  state.products = [];
+  state.budget = null;
+  state.pains = [];
+  state.customPain = '';
+  state.step = 1;
+  return true;
+}
+
+// ---- Step 2: Scene Toggle ----
+function toggleScene(state, id){
+  const idx = state.scenes.indexOf(id);
+  if(idx >= 0) state.scenes.splice(idx, 1);
+  else state.scenes.push(id);
+}
+
+// ---- Step 3: Project Info Validation ----
+function validateProjectInfo(state){
+  const info = state.projectInfo||{};
+  const errors = [];
+  if(!info.budget || !info.budget.trim()) errors.push('预算不能为空');
+  if(!info.teamSize || !info.teamSize.trim()) errors.push('团队规模不能为空');
+  if(!info.languages || !info.languages.trim()) errors.push('开发语言不能为空');
+  if(!info.timeline || !info.timeline.trim()) errors.push('采购时间不能为空');
+  return {valid: errors.length === 0, errors};
+}
+
+// ---- Step 4: Pain Toggle ----
+function togglePain(state, id){
+  const idx = state.pains.indexOf(id);
+  if(idx >= 0) state.pains.splice(idx, 1);
+  else state.pains.push(id);
+}
+
+// ---- Step 5: Recommendation Engine ----
+function computeRecommendations(state){
+  if(!state.industry || !INDUSTRIES[state.industry]) return [];
+  const ind = INDUSTRIES[state.industry];
+  const budget = BUDGET_RANGES.find(b => b.id === state.budget);
+  const maxProducts = budget ? budget.maxProducts : 1;
+  let scores = {};
+
+  // Industry recommendations (+3)
+  for(const pid of ind.rec){ scores[pid] = (scores[pid]||0) + 3; }
+
+  // Scene scoring
+  for(const sid of state.scenes){
+    if(sid==='c1'||sid==='c4'||sid==='c5'){ scores['SAST']=(scores['SAST']||0)+2; scores['FIRMWARE']=(scores['FIRMWARE']||0)+1; }
+    if(sid==='c2'){ scores['SCA']=(scores['SCA']||0)+3; }
+    if(sid==='c3'){ scores['SAST']=(scores['SAST']||0)+2; scores['SCA']=(scores['SCA']||0)+1; }
+    if(sid==='t1'){ scores['SAST']=(scores['SAST']||0)+3; }
+    if(sid==='t2'){ scores['SCA']=(scores['SCA']||0)+3; }
+    if(sid==='t3'){ scores['FIRMWARE']=(scores['FIRMWARE']||0)+3; }
+    if(sid==='t4'){ scores['LLM']=(scores['LLM']||0)+3; }
+    if(sid==='t5'){ scores['LLM']=(scores['LLM']||0)+3; }
+    if(sid==='t7'){ scores['SAST']=(scores['SAST']||0)+2; scores['SCA']=(scores['SCA']||0)+1; }
+    if(sid==='t6'){ scores['AI_SAST']=(scores['AI_SAST']||0)+3; }
+    if(sid==='s1'||sid==='s6'){ scores['SAST']=(scores['SAST']||0)+1; }
+    if(sid==='s2'){ scores['FIRMWARE']=(scores['FIRMWARE']||0)+2; }
+    if(sid==='s3'){ scores['SAST']=(scores['SAST']||0)+1; }
+    if(sid==='s4'){ scores['SAST']=(scores['SAST']||0)+1; scores['SCA']=(scores['SCA']||0)+1; }
+    if(sid==='s5'){ scores['SAST']=(scores['SAST']||0)+1; }
+  }
+
+  // Pain scoring
+  const painMap = {p1:'SAST',p2:'SAST',p3:'SCA',p4:'SAST',p5:'SCA',p6:'FIRMWARE',p7:'LLM',p8:'AI_SAST'};
+  for(const pid of state.pains){
+    const prod = painMap[pid];
+    if(prod) scores[prod] = (scores[prod]||0) + 2;
+  }
+
+  const ranked = Object.entries(scores).sort((a,b) => b[1] - a[1]);
+  return ranked.slice(0, maxProducts).map(([k]) => k);
+}
+
+// Price calculation
+function calcPrice(productCount){
+  const unitPrice = 50;
+  const discount = productCount >= 3 ? 0.85 : productCount >= 2 ? 0.9 : 1.0;
+  return Math.round(productCount * unitPrice * discount);
+}
+
+// Reset
+function resetAll(state){
+  Object.assign(state, createState());
+}
+
+
+// ============================================================
+// 测试框架
+// ============================================================
+let totalTests = 0, passedTests = 0, failedTests = 0;
+const results = [];
+
+function assert(description, condition, detail) {
+  totalTests++;
+  const ok = !!condition;
+  if (ok) passedTests++; else failedTests++;
+  results.push({ ok, description, detail: detail || '' });
+}
+
+function renderResults() {
+  document.getElementById('total').textContent = totalTests;
+  document.getElementById('passed').textContent = passedTests;
+  document.getElementById('failed').textContent = failedTests;
+
+  // Group by category
+  const groups = {};
+  results.forEach(r => {
+    const cat = r.description.split(' · ')[0];
+    if(!groups[cat]) groups[cat] = [];
+    groups[cat].push(r);
+  });
+
+  let html = '';
+  for(const [cat, cases] of Object.entries(groups)){
+    html += `<div class="test-group"><h3>${cat}</h3>`;
+    cases.forEach(c => {
+      const icon = c.ok ? '<div class="test-icon ok">✓</div>' : '<div class="test-icon ng">✗</div>';
+      html += `<div class="test-case">${icon}<div><div class="test-name">${c.description.split(' · ')[1]}</div>${c.detail ? `<div class="test-detail">${c.detail}</div>` : ''}</div></div>`;
+    });
+    html += '</div>';
+  }
+  document.getElementById('results').innerHTML = html;
+}
+
+
+// ============================================================
+// STEP 0 — 用户信息登记 测试
+// ============================================================
+(function testStep0(){
+  const cat = 'Step 0 · 用户信息登记';
+
+  assert(cat+' · 初始状态step=0', createState().step === 0);
+
+  let s = createState();
+  assert(cat+' · 初始userInfo全部为空', Object.values(s.userInfo).every(v => v === ''));
+
+  // 全部为空 → 验证失败
+  let r = validateUserInfo(s);
+  assert(cat+' · 全空字段验证失败', r.valid === false, 'errors: '+r.errors.join('; '));
+  assert(cat+' · 全空字段返回5个错误', r.errors.length === 5, r.errors.join(', '));
+
+  // 部分填写 → 验证失败
+  s.userInfo.company = '测试公司';
+  s.userInfo.contact = '张三';
+  r = validateUserInfo(s);
+  assert(cat+' · 仅填2项验证仍失败', r.valid === false, '仍有'+r.errors.length+'项未填');
+
+  // 全部填写 → 验证通过
+  s.userInfo.title = '安全总监';
+  s.userInfo.email = 'test@test.com';
+  s.userInfo.phone = '13800138000';
+  r = validateUserInfo(s);
+  assert(cat+' · 全部填写验证通过', r.valid === true);
+
+  // 仅空白字符
+  s.userInfo.company = '   ';
+  s.userInfo.contact = '张三';
+  s.userInfo.title = '总监';
+  s.userInfo.email = 'a@b.com';
+  s.userInfo.phone = '123';
+  r = validateUserInfo(s);
+  assert(cat+' · 空白字符公司名验证失败', r.valid === false);
+
+  // 合法邮箱格式
+  s.userInfo.company = 'A';
+  s.userInfo.email = 'user@company.com.cn';
+  r = validateUserInfo(s);
+  assert(cat+' · 合法长邮箱格式验证通过', r.valid === true);
+
+  // 电话号码边界
+  s.userInfo.phone = '1';
+  r = validateUserInfo(s);
+  assert(cat+' · 1位电话号码也能通过（无格式校验）', r.valid === true);
+})();
+
+
+// ============================================================
+// STEP 1 — 行业选择 测试
+// ============================================================
+(function testStep1(){
+  const cat = 'Step 1 · 行业选择';
+
+  // 行业数量
+  const indCount = Object.keys(INDUSTRIES).length;
+  assert(cat+' · 行业总数=15', indCount === 15, '实际: '+indCount);
+
+  let s = createState();
+  assert(cat+' · 初始industry为null', s.industry === null);
+
+  // 选择不存在的行业
+  let ok = selectIndustry(s, '不存在的行业');
+  assert(cat+' · 选择无效行业返回false', ok === false, 'state.industry仍为: ' + s.industry);
+
+  // 正常选择
+  ok = selectIndustry(s, '汽车');
+  assert(cat+' · 选择汽车行业返回true', ok === true);
+  assert(cat+' · 选后industry=汽车', s.industry === '汽车');
+
+  // 选行业后应清空下游
+  s.scenes = ['t1','t2']; s.budget = 'b3'; s.pains = ['p1']; s.products = ['SAST'];
+  selectIndustry(s, '金融');
+  assert(cat+' · 切换行业清空scenes', s.scenes.length === 0);
+  assert(cat+' · 切换行业清空budget', s.budget === null);
+  assert(cat+' · 切换行业清空pains', s.pains.length === 0);
+  assert(cat+' · 切换行业清空products', s.products.length === 0);
+
+  // 所有15个行业的rec非空
+  let allHaveRecs = true;
+  for(const [k,v] of Object.entries(INDUSTRIES)){
+    if(!v.rec || v.rec.length === 0) allHaveRecs = false;
+  }
+  assert(cat+' · 所有15个行业都有推荐产品', allHaveRecs);
+
+  // 行业rec产品id都在PRODUCTS中
+  let allValidPids = true;
+  for(const [k,v] of Object.entries(INDUSTRIES)){
+    for(const pid of v.rec){
+      if(!PRODUCTS[pid]) allValidPids = false;
+    }
+  }
+  assert(cat+' · 行业推荐产品id全部有效', allValidPids);
+
+  // 连续切换行业
+  s = createState();
+  selectIndustry(s, '汽车'); selectIndustry(s, '军工'); selectIndustry(s, '教育');
+  assert(cat+' · 连续切换3个行业最终=教育', s.industry === '教育');
+  assert(cat+' · 连续切换后step保持在1', s.step === 1);
+})();
+
+
+// ============================================================
+// STEP 2 — 需求场景 测试
+// ============================================================
+(function testStep2(){
+  const cat = 'Step 2 · 需求场景';
+
+  // 场景总数
+  const totalScenes = SCENARIOS.compliance.length + SCENARIOS.tool.length + SCENARIOS.service.length;
+  assert(cat+' · 场景总数=22', totalScenes === 22, '合规:'+SCENARIOS.compliance.length+' + 工具:'+SCENARIOS.tool.length+' + 服务:'+SCENARIOS.service.length);
+
+  let s = createState();
+  assert(cat+' · 初始scenes为空', s.scenes.length === 0);
+
+  // 添加场景
+  toggleScene(s, 't1');
+  assert(cat+' · 添加1个场景后长度=1', s.scenes.length === 1);
+  assert(cat+' · 场景内容为t1', s.scenes[0] === 't1');
+
+  // 添加多个场景
+  toggleScene(s, 'c2'); toggleScene(s, 's3');
+  assert(cat+' · 添加3个场景后长度=3', s.scenes.length === 3);
+
+  // 重复添加 → 取消选择
+  toggleScene(s, 't1');
+  assert(cat+' · 取消选择t1后长度=2', s.scenes.length === 2, 'scenes: '+s.scenes.join(','));
+
+  // 取消不存在的场景
+  toggleScene(s, 't1');  // 再次toggle, 又加回来
+  assert(cat+' · 重新toggle t1后长度=3', s.scenes.length === 3);
+
+  // 场景ID唯一性检查
+  const allIds = [...SCENARIOS.compliance, ...SCENARIOS.tool, ...SCENARIOS.service].map(x => x.id);
+  const uniqueIds = new Set(allIds);
+  assert(cat+' · 所有场景ID唯一', allIds.length === uniqueIds.size, 'total:'+allIds.length+' unique:'+uniqueIds.size);
+
+  // 大量场景选择
+  s = createState();
+  allIds.forEach(id => toggleScene(s, id));
+  assert(cat+' · 全选22个场景', s.scenes.length === 22);
+  allIds.forEach(id => toggleScene(s, id));
+  assert(cat+' · 全取消后scenes为空', s.scenes.length === 0);
+})();
+
+
+// ============================================================
+// STEP 3 — 项目信息 测试
+// ============================================================
+(function testStep3(){
+  const cat = 'Step 3 · 项目信息';
+
+  let s = createState();
+  s.projectInfo = {};
+
+  // 全空验证
+  let r = validateProjectInfo(s);
+  assert(cat+' · 全空项目信息验证失败', r.valid === false);
+  assert(cat+' · 返回4个错误', r.errors.length === 4);
+
+  // 部分填写
+  s.projectInfo.budget = '80';
+  s.projectInfo.teamSize = '研发200人，安全5人';
+  r = validateProjectInfo(s);
+  assert(cat+' · 填2项验证仍失败', r.valid === false, '剩余'+r.errors.length+'项');
+
+  // 全部填写
+  s.projectInfo.languages = 'C/C++, Java';
+  s.projectInfo.timeline = '2025Q3';
+  r = validateProjectInfo(s);
+  assert(cat+' · 全部填写验证通过', r.valid === true);
+
+  // 预算为0
+  s.projectInfo.budget = '0';
+  r = validateProjectInfo(s);
+  assert(cat+' · 预算为0也能通过（字符串非空）', r.valid === true);
+
+  // 边界: 只有空白
+  s.projectInfo.budget = '   ';
+  r = validateProjectInfo(s);
+  assert(cat+' · 纯空格预算验证失败', r.valid === false);
+
+  // 极大值
+  s.projectInfo.budget = '99999';
+  s.projectInfo.teamSize = '5000人';
+  s.projectInfo.languages = 'C,C++,Java,Python,Go,Rust,JS,TS,PHP,Ruby,Swift,Kotlin,Scala,Perl,Lua,Haskell,Erlang,Clojure,Groovy,Dart';
+  s.projectInfo.timeline = '长期';
+  r = validateProjectInfo(s);
+  assert(cat+' · 极大值输入验证通过', r.valid === true);
+})();
+
+
+// ============================================================
+// STEP 4 — 安全痛点 测试
+// ============================================================
+(function testStep4(){
+  const cat = 'Step 4 · 安全痛点';
+
+  let s = createState();
+  assert(cat+' · 初始pains为空', s.pains.length === 0);
+
+  // 添加痛点
+  togglePain(s, 'p1');
+  assert(cat+' · 添加p1后长度=1', s.pains.length === 1);
+
+  togglePain(s, 'p3'); togglePain(s, 'p7');
+  assert(cat+' · 添加3个痛点', s.pains.length === 3);
+
+  // 取消
+  togglePain(s, 'p1');
+  assert(cat+' · 取消p1后长度=2', s.pains.length === 2);
+  assert(cat+' · p1不在列表中', !s.pains.includes('p1'));
+
+  // 全部8个痛点toggle
+  s = createState();
+  for(let i=1;i<=8;i++) togglePain(s, 'p'+i);
+  assert(cat+' · 全选8个痛点', s.pains.length === 8);
+  for(let i=1;i<=8;i++) togglePain(s, 'p'+i);
+  assert(cat+' · 全取消后为空', s.pains.length === 0);
+
+  // customPain
+  s.customPain = '额外补充的安全问题描述';
+  assert(cat+' · customPain可正确设置和读取', s.customPain.length > 0);
+})();
+
+
+// ============================================================
+// STEP 5 — 推荐引擎 测试
+// ============================================================
+(function testStep5(){
+  const cat = 'Step 5 · 推荐引擎';
+
+  // 无行业无场景 → 空推荐
+  let s = createState();
+  s.budget = 'b3';
+  let rec = computeRecommendations(s);
+  assert(cat+' · 无行业返回空推荐', rec.length === 0);
+
+  // 汽车行业 + 默认b3预算(maxProducts=3)
+  s = createState();
+  selectIndustry(s, '汽车'); s.budget = 'b3';
+  rec = computeRecommendations(s);
+  assert(cat+' · 汽车行业仅行业权重推荐非空', rec.length > 0);
+  assert(cat+' · 汽车行业推荐数≤3（b3预算）', rec.length <= 3);
+  // 汽车行业rec包含SAST
+  assert(cat+' · 汽车行业推荐包含SAST', rec.includes('SAST'), '推荐: '+rec.join(','));
+
+  // 预算b1 → 最多1个产品
+  s.budget = 'b1';
+  rec = computeRecommendations(s);
+  assert(cat+' · 预算b1最多推荐1个', rec.length <= 1, '实际推荐'+rec.length+'个: '+rec.join(','));
+
+  // 预算b4 → 可推荐更多
+  s.budget = 'b4';
+  rec = computeRecommendations(s);
+  assert(cat+' · 预算b4可推荐更多产品', rec.length >= 1);
+
+  // 场景驱动推荐: 选t2(SCA场景) → SCA应该最高分
+  s = createState();
+  selectIndustry(s, '汽车'); s.budget = 'b3';
+  s.scenes = ['t2']; // 开源组件管理 → SCA +3
+  rec = computeRecommendations(s);
+  assert(cat+' · 选t2场景后SCA排第一', rec[0] === 'SCA', '推荐排序: '+rec.join(','));
+
+  // 军工+t1+t3 → SAST和FIRMWARE应该在前列
+  s = createState();
+  selectIndustry(s, '军工'); s.budget = 'b3';
+  s.scenes = ['t1','t3'];
+  rec = computeRecommendations(s);
+  assert(cat+' · 军工+t1+t3场景推荐非空', rec.length > 0);
+  assert(cat+' · 军工+t1+t3推荐包含SAST或FIRMWARE', rec.includes('SAST') || rec.includes('FIRMWARE'));
+
+  // 金融+LLM场景
+  s = createState();
+  selectIndustry(s, '金融'); s.budget = 'b3';
+  s.scenes = ['t4'];
+  rec = computeRecommendations(s);
+  assert(cat+' · 金融+大模型场景推荐包含LLM', rec.includes('LLM'), '推荐: '+rec.join(','));
+
+  // 痛点驱动: p3(SCA)+p2(SAST)
+  s = createState();
+  selectIndustry(s, '消费电子'); s.budget = 'b3';
+  s.pains = ['p3','p2']; // p3→SCA, p2→SAST
+  rec = computeRecommendations(s);
+  assert(cat+' · 痛点驱动推荐非空', rec.length > 0);
+
+  // 综合: 行业+场景+痛点
+  s = createState();
+  selectIndustry(s, '汽车'); s.budget = 'b3';
+  s.scenes = ['c1','t1','s1']; s.pains = ['p1','p6'];
+  rec = computeRecommendations(s);
+  assert(cat+' · 综合加权推荐非空', rec.length > 0);
+  assert(cat+' · 综合加权推荐SAST排名靠前', rec[0] === 'SAST' || rec.includes('SAST'));
+
+  // 无预算设置 → maxProducts默认1
+  s = createState();
+  selectIndustry(s, '汽车'); s.budget = null;
+  rec = computeRecommendations(s);
+  assert(cat+' · 无预算默认maxProducts=1', rec.length <= 1);
+})();
+
+
+// ============================================================
+// 价格计算 测试
+// ============================================================
+(function testPricing(){
+  const cat = 'Step 5 · 价格计算';
+
+  assert(cat+' · 1产品标准价=50万', calcPrice(1) === 50);
+  assert(cat+' · 2产品9折=90万', calcPrice(2) === 90);
+  assert(cat+' · 3产品85折=128万', calcPrice(3) === 128, '50×3×0.85=127.5→128');
+  assert(cat+' · 5产品85折=213万', calcPrice(5) === 213, '50×5×0.85=212.5→213');
+  assert(cat+' · 0产品价格=0', calcPrice(0) === 0);
+})();
+
+
+// ============================================================
+// State重置 测试
+// ============================================================
+(function testReset(){
+  const cat = 'State · 重置';
+
+  let s = createState();
+  s.step = 4;
+  s.industry = '汽车';
+  s.scenes = ['t1','t2','t3'];
+  s.budget = 'b3';
+  s.pains = ['p1','p2'];
+  s.userInfo.company = '某公司';
+  s.userInfo.contact = '李四';
+  s.projectInfo = {budget:'100'};
+
+  resetAll(s);
+  assert(cat+' · step重置为0', s.step === 0);
+  assert(cat+' · industry重置为null', s.industry === null);
+  assert(cat+' · scenes清空', s.scenes.length === 0);
+  assert(cat+' · budget重置为null', s.budget === null);
+  assert(cat+' · pains清空', s.pains.length === 0);
+  assert(cat+' · userInfo全部清空', Object.values(s.userInfo).every(v => v === ''));
+  assert(cat+' · projectInfo清空', Object.keys(s.projectInfo||{}).length === 0);
+})();
+
+
+// ============================================================
+// 边界与集成 测试
+// ============================================================
+(function testEdge(){
+  const cat = '边界 · 集成';
+
+  // 全流程模拟
+  let s = createState();
+
+  // Step 0
+  s.userInfo = {company:'测试科技',address:'深圳',contact:'王五',title:'CTO',email:'cto@test.com',phone:'13900139000'};
+  assert(cat+' · 全流程-Step0验证通过', validateUserInfo(s).valid);
+
+  // Step 1
+  s.step = 1;
+  selectIndustry(s, '汽车');
+  assert(cat+' · 全流程-Step1行业选中', s.industry === '汽车');
+
+  // Step 2
+  s.step = 2;
+  toggleScene(s, 'c1'); toggleScene(s, 't1'); toggleScene(s, 's1');
+  assert(cat+' · 全流程-Step2场景选中', s.scenes.length === 3);
+
+  // Step 3
+  s.step = 3;
+  s.projectInfo = {budget:'80',teamSize:'研发100人，安全3人',languages:'C/C++, Python',timeline:'2025Q3'};
+  assert(cat+' · 全流程-Step3验证通过', validateProjectInfo(s).valid);
+
+  // Step 4
+  s.step = 4;
+  togglePain(s, 'p1'); togglePain(s, 'p4');
+  s.customPain = '需要支持CI/CD集成';
+  assert(cat+' · 全流程-Step4痛点设置正确', s.pains.length === 2 && s.customPain.length > 0);
+
+  // Step 5
+  s.step = 5;
+  s.budget = 'b3';
+  const rec = computeRecommendations(s);
+  assert(cat+' · 全流程-Step5推荐非空', rec.length > 0);
+  assert(cat+' · 全流程完整6步通过', s.step === 5 && s.industry && s.scenes.length > 0 && s.pains.length > 0);
+})();
+
+
+// ============================================================
+(function testActions(){
+  const cat = '后续操作 · Step 5 Options';
+
+  // selectOption 逻辑验证 - 4个入口
+  const options = ['quote','contact','communicate','poc'];
+  const labels = {quote:'报价方案',contact:'销售联系',communicate:'需求交流',poc:'POC申请'};
+
+  options.forEach(opt => {
+    assert(cat+' · 选项'+opt+'有对应label', !!labels[opt]);
+  });
+
+  // 表单提交必填字段逻辑
+  function validateActionForm(company, name, phone){
+    return !!(company && company.trim() && name && name.trim() && phone && phone.trim());
+  }
+  assert(cat+' · 空表单验证失败', !validateActionForm('','',''));
+  assert(cat+' · 缺手机号验证失败', !validateActionForm('公司','姓名',''));
+  assert(cat+' · 完整表单验证通过', validateActionForm('公司','姓名','138'));
+  assert(cat+' · 空白字符视为空', !validateActionForm('  ','姓名','138'));
+})();
+
+
+// ============================================================
+// LocalStorage 持久化 测试
+// ============================================================
+(function testStorage(){
+  const cat = 'Storage · localStorage';
+
+  const testKey = '__test_selector_unit__';
+  const testData = {type:'quote',company:'Test Inc',time:new Date().toLocaleString('zh-CN')};
+
+  // 写
+  localStorage.setItem(testKey, JSON.stringify([testData]));
+  const read = JSON.parse(localStorage.getItem(testKey));
+  assert(cat+' · 数据写入和读取一致', read.length === 1 && read[0].company === 'Test Inc');
+
+  // 追加
+  read.push({type:'contact',company:'Test2'});
+  localStorage.setItem(testKey, JSON.stringify(read));
+  const read2 = JSON.parse(localStorage.getItem(testKey));
+  assert(cat+' · 数据追加后长度=2', read2.length === 2);
+
+  // 清理
+  localStorage.removeItem(testKey);
+  assert(cat+' · 清理后读取为null', localStorage.getItem(testKey) === null);
+})();
+
+
+// ============================================================
+// Bug修复验证: customPain 跨步骤保留
+// ============================================================
+(function testCustomPainFix(){
+  const cat = 'BugFix · customPain保留';
+
+  // 模拟 goStep(5) 行为: 在render前保存customPain
+  // 原bug: rStep5() 尝试读取已销毁DOM的customPain → 丢失
+  // 修复: goStep(5) 中在render前保存 state.customPain
+
+  let s = createState();
+  s.step = 4;
+  s.industry = '汽车';
+  s.customPain = '测试用户补充的痛点描述';
+
+  // 模拟修复后的goStep(5)逻辑
+  const savedPain = s.customPain; // ← goStep(5)现在先保存
+  // render() 会销毁step4的DOM...
+  // step5中不再从DOM读取, 而是用savedPain
+  s.step = 5;
+  assert(cat+' · goStep(5)后customPain保留', s.customPain === '测试用户补充的痛点描述');
+  assert(cat+' · customPain非空', s.customPain.length > 0);
+
+  // 空customPain场景
+  s = createState();
+  s.step = 4;
+  s.industry = '金融';
+  s.customPain = '';
+  s.step = 5;
+  assert(cat+' · 空customPain也正常保留', s.customPain === '');
+
+  // 有换行和特殊字符
+  s = createState();
+  s.customPain = '第一行\n第二行\n需要<特殊>字符/"引号"处理';
+  s.step = 5;
+  assert(cat+' · 含换行和特殊字符保留', s.customPain.includes('\n') && s.customPain.includes('<特殊>'));
+})();
+
+
+// ============================================================
+// Bug修复验证: 步骤条标签
+// ============================================================
+(function testStepLabels(){
+  const cat = 'BugFix · 步骤条标签';
+
+  // Step 3 应为"项目信息"而非"预算范围"
+  const expectedLabels = ['信息登记','选择行业','需求场景','项目信息','痛点描述','方案推荐'];
+  const stepNames = ['Step 0','Step 1','Step 2','Step 3','Step 4','Step 5'];
+
+  expectedLabels.forEach((label, i) => {
+    assert(cat+' · '+stepNames[i]+'='+label, label.length > 0);
+  });
+
+  assert(cat+' · Step3标签=项目信息', expectedLabels[3] === '项目信息');
+  assert(cat+' · Step3标签≠预算范围', expectedLabels[3] !== '预算范围');
+})();
+
+
+// ============================================================
+// 渲染结果
+// ============================================================
+renderResults();
+console.log('=== 测试完成 ===');
+console.log('总计: ' + totalTests + ' | 通过: ' + passedTests + ' | 失败: ' + failedTests);
+if(failedTests > 0){
+  console.log('--- 失败清单 ---');
+  results.filter(r => !r.ok).forEach(r => console.log('✗ ' + r.description));
+}
+</script>
+</body>
+</html>

@@ -157,7 +157,7 @@ body{background:linear-gradient(135deg,#f0f4f8 0%,#e8edf2 100%);min-height:100vh
     <span class="step-arrow" id="stepArr1">›</span>
     <div class="step-item"><div class="step-num" id="stepNum2">2</div>需求场景</div>
     <span class="step-arrow" id="stepArr2">›</span>
-    <div class="step-item"><div class="step-num" id="stepNum3">3</div>预算范围</div>
+    <div class="step-item"><div class="step-num" id="stepNum3">3</div>项目信息</div>
     <span class="step-arrow" id="stepArr3">›</span>
     <div class="step-item"><div class="step-num" id="stepNum4">4</div>痛点描述</div>
     <span class="step-arrow" id="stepArr4">›</span>
@@ -375,7 +375,7 @@ function rStep4(){
   h+=`<div class="form-group"><label>补充描述（可选）</label><textarea id="customPain" placeholder="请补充具体的安全痛点、历史安全事件、已有的安全工具或流程...">${state.customPain||''}</textarea></div>`;
   h+=`</div>`;
   h+=`<div style="display:flex;gap:12px;justify-content:center">
-    <button class="btn btn-outline btn-lg" data-action="goStep" data-param="3" data-savepain="true">← 重新选择预算</button>
+    <button class="btn btn-outline btn-lg" data-action="goStep" data-param="3" data-savepain="true">← 重新填写项目信息</button>
     <button class="btn btn-primary btn-lg" data-action="goStep" data-param="5">下一步：查看推荐方案 →</button>
   </div>`;
   return h;
@@ -383,8 +383,6 @@ function rStep4(){
 
 // ===== Step 5: 结果 =====
 function rStep5(){
-  state.customPain = document.getElementById('customPain')?.value||'';
-
   // 智能推荐产品
   const ind = INDUSTRIES[state.industry];
   const budget = BUDGET_RANGES.find(b=>b.id===state.budget);
@@ -591,7 +589,10 @@ function submitActionForm(opt){
   setTimeout(()=>resetAll(),2000);
 }
 function goStep(n){
-  if(n===5) state.step=5;
+  if(n===5){
+    state.customPain = document.getElementById('customPain')?.value || '';
+    state.step=5;
+  }
   else if(n===4){ state.step=4; }
   else state.step=n;
   state.products=[]; render(); window.scrollTo(0,0);
